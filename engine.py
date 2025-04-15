@@ -1,10 +1,4 @@
-def print_board(board):
-    for row in range(8):
-        print(8 - row, "|", end=' ')
-        for col in range(8):
-            print(board[row][col], end=' ')
-        print("|")
-# Use integers with sign for color
+# Constants
 PAWN = 1
 KNIGHT = 2
 BISHOP = 3
@@ -12,8 +6,18 @@ ROOK = 4
 QUEEN = 5
 KING = 6
 
-# Negative = black, Positive = white
-# Example: 3 = white bishop, -3 = black bishop
+def is_on_board(row, col):
+    return 0 <= row < 8 and 0 <= col < 8
+
+def print_board(board):
+    for row in range(8):
+        print(8 - row, "|", end=' ')
+        for col in range(8):
+            print(board[row][col], end=' ')
+        print("|")
+    print("   ----------------")
+    print("    a b c d e f g h")
+
 def Board_Setup():
     board = [[0 for _ in range(8)] for _ in range(8)]
     for i in range(8):
@@ -37,9 +41,42 @@ def Board_Setup():
     board[7][3] = QUEEN
     return board
 
-board = Board_Setup()
+class Piece:
+    def __init__(self, value, cur_row, cur_col):
+        self.value = value
+        self.cur_row = cur_row
+        self.cur_col = cur_col
 
+    def is_on_board(self, row, col):
+        return 0 <= row < 8 and 0 <= col < 8
 
+    def collision(self, row, col, board):
+        if not self.is_on_board(row, col):
+            return False
+        target = board[row][col]
+        if target == 0:
+            return False
+        return (target > 0) == (self.value > 0)
 
-print_board(board)
+class King(Piece):
+    def legal_moves(self, board):
+        legal_moves = []
+        for dr in range(-1, 2):
+            for dc in range(-1, 2):
+                if dr == 0 and dc == 0:
+                    continue
+                nr = self.cur_row + dr
+                nc = self.cur_col + dc
+                if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
+                    legal_moves.append((nr, nc))
+        return legal_moves
 
+def main():
+    board = Board_Setup()
+    print_board(board)
+
+    # Test: white king at 5, 5
+    k = King(KING, 7, 7)
+    print("Legal moves for king at (5,5):", k.legal_moves(board))
+
+main()
