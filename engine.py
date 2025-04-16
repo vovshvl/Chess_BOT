@@ -70,6 +70,77 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
+class Bishop(Piece):
+    def legal_moves(self, board):
+        legal_moves = []
+        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]  # diagonal directions
+
+        for dr, dc in directions:
+            r, c = self.cur_row, self.cur_col
+            while True:
+                r += dr
+                c += dc
+                if not self.is_on_board(r, c):
+                    break
+
+                target = board[r][c]
+                if target == 0:
+                    legal_moves.append((r, c))
+                elif (target > 0) != (self.value > 0):
+                    legal_moves.append((r, c)) #мне кажется надо так же указывать фигуру
+                    break  #вражеская фигура
+                else:
+                    break  #своя фигура
+
+        return legal_moves
+
+class Rook(Piece):
+    def legal_moves(self, board):
+        legal_moves = []
+        directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
+        for dr, dc in directions:
+            r, c = self.cur_row, self.cur_col
+            while True:
+                r += dr
+                c += dc
+                if not self.is_on_board(r, c):
+                    break
+
+                target = board[r][c]
+                if target == 0:
+                    legal_moves.append((r, c))
+                elif (target > 0) != (self.value > 0):
+                    legal_moves.append((r, c)) #мне кажется надо так же указывать фигуру
+                    break  #вражеская фигура
+                else:
+                    break  #своя фигура
+        return legal_moves
+
+class Queen(Piece):
+    def legal_moves(self, board):
+        legal_moves = []
+        directions = [(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        for dr, dc in directions:
+            r, c = self.cur_row, self.cur_col
+            while True:
+                r += dr
+                c += dc
+                if not self.is_on_board(r, c):
+                    break
+
+                target = board[r][c]
+                if target == 0:
+                    legal_moves.append((r, c))
+                elif (target > 0) != (self.value > 0):
+                    legal_moves.append((r, c)) #мне кажется надо так же указывать фигуру
+                    break  #вражеская фигура
+                else:
+                    break  #своя фигура
+        return legal_moves
+ class Knight(Piece):
+     def legal_moves(self, board):
+         legal_moves = []
+
 
 def main():
     board = Board_Setup()
