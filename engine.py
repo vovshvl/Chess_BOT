@@ -76,6 +76,9 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
+    def is_check(self, board, row, col):
+        if not self.is_on_board(row, col):
+            print('unfinished Method')
 class Bishop(Piece):
     def legal_moves(self, board):
         legal_moves = []
@@ -164,6 +167,9 @@ class Knight(Piece):
                  else:
                      break
          return legal_moves
+class Pawn(Piece):
+    def legal_moves(self, board):
+        legal_moves = []
 
 
 def main():
@@ -174,8 +180,10 @@ def main():
     # Test: white king at 5, 5
     k = King(KING, 7, 7)
     b = Bishop(-BISHOP, 5, 5)
+    K = Knight(KNIGHT, 5, 5)
+    q = Queen(-QUEEN, 7,5)
     print_board(board)
-    print(b.legal_moves(board))
+    print(q.legal_moves(board))
 
 
 main()
