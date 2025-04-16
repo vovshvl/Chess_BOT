@@ -20,6 +20,13 @@ def print_board(board):
     print("   ----------------")
     print("    0 1 2 3 4 5 6 7")
 
+def print_coordinates():
+    for row in range(8):
+        for col in range(8):
+            print(f"({row}, {col})", end=" ")
+        print()
+
+
 def Empty_board():
     board = [[0 for _ in range(8)] for _ in range(8)]
 
@@ -174,8 +181,9 @@ def main():
     # Test: white king at 5, 5
     k = King(KING, 7, 7)
     b = Bishop(-BISHOP, 5, 5)
-    print_board(board)
-    print(b.legal_moves(board))
+    #print_board(board)
+    #print(b.legal_moves(board))
+    print_coordinates()
 
 
 main()
