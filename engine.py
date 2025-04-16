@@ -118,7 +118,8 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
-
+    def is_check(self):
+        return True
 
 class Bishop(Piece):
     def legal_moves(self, board):
