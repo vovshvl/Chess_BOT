@@ -68,7 +68,7 @@ class Piece:
     def directionscheck(self, directions,board):
         legal_moves =[]
         for dr, dc in directions:
-            r, c = self.cur_row, self.cur_col
+            r, c = self.row, self.col
             while True:
                 r += dr
                 c += dc
@@ -100,8 +100,8 @@ class King(Piece):
             for dc in range(-1, 2):
                 if dr == 0 and dc == 0:
                     continue
-                nr = self.cur_row + dr
-                nc = self.cur_col + dc
+                nr = self.  row + dr
+                nc = self.  col + dc
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
@@ -140,7 +140,7 @@ class Pawn(Piece):
             directions = [(1,0)]
             attacks = [(1,1),(1,-1)]
         for dr, dc in directions:
-            r, c = self.cur_row, self.cur_col
+            r, c = self.row, self.  col
             while True:
                 r += dr
                 c += dc
@@ -152,7 +152,7 @@ class Pawn(Piece):
                 else:
                     break
         for dr, dc in attacks:
-            r, c = self.cur_row, self.cur_col
+            r, c = self.row, self.  col
             while True:
                 r += dr
                 c += dc

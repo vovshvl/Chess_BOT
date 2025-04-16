@@ -1,5 +1,5 @@
 from board import Board
 
-test_board = Board()
-
-test_board.print_board()
+initialise_board()
+print(initialise_board())
+print_board()

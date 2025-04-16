@@ -4,32 +4,28 @@ from engine import Bishop
 from engine import Knight
 from engine import Rook
 
+pieces =[
+    King(-6, 0, 4),
+    King(6, 7, 4),
+    Rook(-4, 0, 0),
+    Rook(-4, 0, 7),
+    Rook(4, 7, 7),
+    Rook(4, 7, 0)
+]
+board = [[None for _ in range(8)] for _ in range(8)]
+def initialise_board():
 
-class Board():
-    def __init__(self):
-        king_b = King(-6, 0, 4)
-        king_w = King(6, 7, 4)
-
-        rook_b = Rook(-4, 0, 0)
-        rook_b_2 = Rook(-4, 0, 7)
-        rook_w = Rook(4, 0, 0)
-        rook_w_2 = Rook(4, 0, 7)
-        self.list = []
-        self.list.append(rook_b)
-        for i in range(6):
-            self.list.append(0)
+    for piece in pieces:
+        board[piece.row][piece.col] = piece
 
 
-    def print_board(self):
-        print("  0 1 2 3 4 5 6 7")
-        print("-----------------")
-        for r in range(8):
-            print(f"{r}|", end="")
-            for c in range(8):
-                piece = self.list[r]
-                if piece:
-                    print(f"{piece.value} ", end="")
-                else:
-                    print(". ", end="")
-            print()
-        print("-----------------")
+def print_board():
+    print("  0 1 2 3 4 5 6 7")
+    print("-----------------")
+    for r in range(8):
+        print(f"{r}|", end="")
+        for c in range(8):
+            value = board[r][c]
+            print(f"{value:2} ", end="")
+
+            print("-----------------")
