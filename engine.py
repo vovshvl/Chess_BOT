@@ -1,3 +1,5 @@
+
+
 # Constants
 PAWN = 1
 KNIGHT = 2
