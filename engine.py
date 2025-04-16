@@ -10,14 +10,20 @@ def is_on_board(row, col):
     return 0 <= row < 8 and 0 <= col < 8
 
 def print_board(board):
+    print("    0 1 2 3 4 5 6 7")
+    print("   ----------------")
     for row in range(8):
-        print(8 - row, "|", end=' ')
+        print( row, "|", end=' ')
         for col in range(8):
             print(board[row][col], end=' ')
         print("|")
     print("   ----------------")
-    print("    a b c d e f g h")
+    print("    0 1 2 3 4 5 6 7")
 
+def Empty_board():
+    board = [[0 for _ in range(8)] for _ in range(8)]
+
+    return board
 def Board_Setup():
     board = [[0 for _ in range(8)] for _ in range(8)]
     for i in range(8):
@@ -137,17 +143,39 @@ class Queen(Piece):
                 else:
                     break  #своя фигура
         return legal_moves
- class Knight(Piece):
+class Knight(Piece):
      def legal_moves(self, board):
          legal_moves = []
+         directions = [(2, 1), (2, -1), (1, -2), (1, 2),(-1,2),(-1,-2),(-2,-1),(-2,1)]
+         for dr, dc in directions:
+             r, c = self.cur_row, self.cur_col
+             while True:
+                 r += dr
+                 c += dc
+                 if not self.is_on_board(r, c):
+                     break
+                 target = board[r][c]
+                 if target == 0:
+                     legal_moves.append((r, c))
+                 elif (target > 0) != (self.value > 0):
+                     legal_moves.append((r, c))
+                     break
+
+                 else:
+                     break
+         return legal_moves
 
 
 def main():
-    board = Board_Setup()
-    print_board(board)
 
+    board = Empty_board()
+    print_board(board)
+    board = Board_Setup()
     # Test: white king at 5, 5
     k = King(KING, 7, 7)
-    print("Legal moves for king at (5,5):", k.legal_moves(board))
+    b = Bishop(-BISHOP, 5, 5)
+    print_board(board)
+    print(b.legal_moves(board))
+
 
 main()
