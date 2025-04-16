@@ -8,19 +8,22 @@ ROOK = 4
 QUEEN = 5
 KING = 6
 
+
 def is_on_board(row, col):
     return 0 <= row < 8 and 0 <= col < 8
+
 
 def print_board(board):
     print("    0 1 2 3 4 5 6 7")
     print("   ----------------")
     for row in range(8):
-        print( row, "|", end=' ')
+        print(row, "|", end=' ')
         for col in range(8):
             print(board[row][col], end=' ')
         print("|")
     print("   ----------------")
     print("    0 1 2 3 4 5 6 7")
+
 
 def print_coordinates():
     for row in range(8):
@@ -28,12 +31,14 @@ def print_coordinates():
             print(f"({row}, {col})", end=" ")
         print()
 
-def Empty_board():
+
+def empty_board():
     board = [[0 for _ in range(8)] for _ in range(8)]
 
     return board
 
-def Board_Setup():
+
+def board_setup():
     board = [[0 for _ in range(8)] for _ in range(8)]
     for i in range(8):
         board[1][i] = -PAWN
@@ -56,17 +61,24 @@ def Board_Setup():
     board[7][3] = QUEEN
     return board
 
+
 class Piece:
-    def __init__(self, value, cur_row, cur_col):
-        self.value = value
-        self.cur_row = cur_row
-        self.cur_col = cur_col
+
+    def __init__(self, value, row, col, has_moved=False):
+        self.value = value  # type (1=Pawn, 2=Knight, etc.)
+        self.row = row
+        self.col = col
+        self.has_moved = has_moved
+        self.is_white = value > 0
+
+    def position(self):
+        return self.row, self.col
 
     def is_on_board(self, row, col):
         return 0 <= row < 8 and 0 <= col < 8
 
-    def directionscheck(self, directions,board):
-        legal_moves =[]
+    def directionscheck(self, directions, board):
+        legal_moves = []
         for dr, dc in directions:
             r, c = self.row, self.col
             while True:
@@ -93,6 +105,7 @@ class Piece:
             return False
         return (target > 0) == (self.value > 0)
 
+
 class King(Piece):
     def legal_moves(self, board):
         legal_moves = []
@@ -113,11 +126,13 @@ class Bishop(Piece):
         legal_moves = self.directionscheck(directions, board)
         return legal_moves
 
+
 class Rook(Piece):
     def legal_moves(self, board):
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
         legal_moves = self.directionscheck(directions, board)
         return legal_moves
+
 
 class Queen(Piece):
     def legal_moves(self, board):
@@ -125,20 +140,24 @@ class Queen(Piece):
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1)]
         legal_moves = self.directionscheck(directions, board)
         return legal_moves
+
+
 class Knight(Piece):
      def legal_moves(self, board):
-         directions = [(2, 1), (2, -1), (1, -2), (1, 2),(-1,2),(-1,-2),(-2,-1),(-2,1)]
+         directions = [(2, 1), (2, -1), (1, -2), (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
          legal_moves = self.directionscheck(directions, board)
          return legal_moves
+
+
 class Pawn(Piece):
     def legal_moves(self, board):
         legal_moves = []
         if self.value >0:
-            directions = [(-1,0)]
-            attacks = [(-1,1),(-1,-1)]
+            directions = [(-1, 0)]
+            attacks = [(-1, 1), (-1, -1)]
         else:
-            directions = [(1,0)]
-            attacks = [(1,1),(1,-1)]
+            directions = [(1, 0)]
+            attacks = [(1, 1),(1, -1)]
         for dr, dc in directions:
             r, c = self.row, self.  col
             while True:
@@ -172,9 +191,9 @@ class Pawn(Piece):
 
 def main():
 
-    board = Empty_board()
+    board = empty_board()
     print_board(board)
-    board = Board_Setup()
+    board = board_setup()
     # Test: white king at 5, 5
 
     #print_board(board)
