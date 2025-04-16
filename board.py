@@ -3,15 +3,40 @@ from engine import Queen
 from engine import Bishop
 from engine import Knight
 from engine import Rook
+from engine import Pawn
 
-pieces =[
-    King(-6, 0, 4),
-    King(6, 7, 4),
+pieces = [
+    # Pawns
+    *[Pawn(-1, 1, i) for i in range(8)],
+    *[Pawn(1, 6, i) for i in range(8)],
+
+    # Rooks
     Rook(-4, 0, 0),
     Rook(-4, 0, 7),
+    Rook(4, 7, 0),
     Rook(4, 7, 7),
-    Rook(4, 7, 0)
+
+    # Knights
+    Knight(-2, 0, 1),
+    Knight(-2, 0, 6),
+    Knight(2, 7, 1),
+    Knight(2, 7, 6),
+
+    # Bishops
+    Bishop(-3, 0, 2),
+    Bishop(-3, 0, 5),
+    Bishop(3, 7, 2),
+    Bishop(3, 7, 5),
+
+    # Kings
+    King(-6, 0, 4),
+    King(6, 7, 4),
+
+    # Queens
+    Queen(-5, 0, 3),
+    Queen(5, 7, 3),
 ]
+
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
 
