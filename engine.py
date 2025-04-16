@@ -20,6 +20,13 @@ def print_board(board):
     print("   ----------------")
     print("    0 1 2 3 4 5 6 7")
 
+def print_coordinates():
+    for row in range(8):
+        for col in range(8):
+            print(f"({row}, {col})", end=" ")
+        print()
+
+
 def Empty_board():
     board = [[0 for _ in range(8)] for _ in range(8)]
 
@@ -76,9 +83,9 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
-    def is_check(self, board, row, col):
-        if not self.is_on_board(row, col):
-            print('unfinished Method')
+
+    def is_in_check(self):
+
 class Bishop(Piece):
     def legal_moves(self, board):
         legal_moves = []
@@ -167,9 +174,6 @@ class Knight(Piece):
                  else:
                      break
          return legal_moves
-class Pawn(Piece):
-    def legal_moves(self, board):
-        legal_moves = []
 
 
 def main():
@@ -180,10 +184,9 @@ def main():
     # Test: white king at 5, 5
     k = King(KING, 7, 7)
     b = Bishop(-BISHOP, 5, 5)
-    K = Knight(KNIGHT, 5, 5)
-    q = Queen(-QUEEN, 7,5)
-    print_board(board)
-    print(q.legal_moves(board))
+    #print_board(board)
+    #print(b.legal_moves(board))
+    print_coordinates()
 
 
 main()
