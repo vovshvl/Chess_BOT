@@ -54,55 +54,111 @@ class Piece:
         return 0 <= row < 8 and 0 <= col < 8
 
     def under_attack(self, board, row, col):
-        directions =[(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1),(2, 1), (2, -1), (1, -2), (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
-        sign = 1 if self.value > 0 else -1
-        for dr, dc in directions:
-            r, c = row, col
-            while True:
-                r += dr
-                c += dc
-                if not self.is_on_board(r, c):
-                    break
+        if board is None:
+            raise ValueError("Board cannot be None")
+
+        sign = 1 if self.value > 0 else -1  # Positive = white, Negative = black
+
+        # Sliding piece directions
+        sliding_dirs = [
+            (1, 0), (-1, 0), (0, -1), (0, 1),  # Rook & Queen
+            (-1, -1), (-1, 1), (1, -1), (1, 1)  # Bishop & Queen
+        ]
+
+        for dr, dc in sliding_dirs:
+            r, c = row + dr, col + dc
+            while self.is_on_board(r, c):
                 target = board[r][c]
-                if sign > 0 and target > 0:
+                if target is None:
+                    r += dr
+                    c += dc
+                    continue
+
+                if target.value * sign > 0:  # Same color
                     break
-                if sign < 0 and target < 0:
-                    break
-                if abs(dr) == 1 and abs(dc) == 1 and target in (3, 5)*sign:
+
+                abs_val = abs(target.value)
+                if abs(dr) == abs(dc) and abs_val in [3, 5]:  # Bishop or Queen
                     return True
-                if (dr == 0 or dc == 0) and target in (4, 5)*sign:
+                if (dr == 0 or dc == 0) and abs_val in [4, 5]:  # Rook or Queen
                     return True
-                if (abs(dr), abs(dc)) in [(2, 1), (1, 2)] and target == 2*sign:
+                break  # Blocked
+
+        # Knight moves
+        knight_moves = [
+            (2, 1), (1, 2), (-1, 2), (-2, 1),
+            (-2, -1), (-1, -2), (1, -2), (2, -1)
+        ]
+        for dr, dc in knight_moves:
+            r, c = row + dr, col + dc
+            if self.is_on_board(r, c):
+                target = board[r][c]
+                if target is not None and target.value == 2 * -sign:
                     return True
-                if abs(dc) == 1 and dr == -1*sign and target == 1*sign:
+
+        # Pawn captures
+        for dc in [-1, 1]:
+            r, c = row - sign, col + dc
+            if self.is_on_board(r, c):
+                target = board[r][c]
+                if target is not None and target.value == 1 * -sign:
                     return True
+
         return False
 
-    def is_defended(self, board, row, col):
-        directions = [(1, 0), (-1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1), (2, 1), (2, -1), (1, -2),
-                      (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
+    def is_defended(self, board):
         sign = -1 if self.value > 0 else 1
+        row, col = self.row, self.col
+
+        # Straight and diagonal directions (for queen, rook, bishop)
+        directions = [
+            (1, 0), (-1, 0), (0, -1), (0, 1),  # Rook / Queen
+            (-1, -1), (-1, 1), (1, -1), (1, 1)  # Bishop / Queen
+        ]
+
+        # Sliding pieces
         for dr, dc in directions:
-            r, c = row, col
-            while True:
-                r += dr
-                c += dc
-                if not self.is_on_board(r, c):
+            r, c = row + dr, col + dc
+            while self.is_on_board(r, c):
+                if board is None:
                     break
                 target = board[r][c]
-                if sign > 0 and target < 0:
-                    break
-                if sign < 0 and target > 0:
-                    break
+                if target is None:
+                    r += dr
+                    c += dc
+                    continue
 
-                if abs(dr) == 1 and abs(dc) == 1 and target in (3, 5) * sign:
+                if (target.value * sign) < 0:  # Opponent piece
+                    abs_val = abs(target.value)
+                    if (abs(dr) == abs(dc) and abs_val in [3, 5]) or \
+                            ((dr == 0 or dc == 0) and abs_val in [4, 5]):
                         return True
-                if (dr == 0 or dc == 0) and target in (4, 5) * sign:
-                        return True
-                if (abs(dr), abs(dc)) in [(2, 1), (1, 2)] and target == 2 * sign:
-                        return True
-                if abs(dc) == 1 and dr == -1 * sign and target == 1 * sign:
-                        return True
+                break  # Blocked by any piece
+
+        # Knight directions
+        knight_moves = [
+            (2, 1), (1, 2), (-1, 2), (-2, 1),
+            (-2, -1), (-1, -2), (1, -2), (2, -1)
+        ]
+        for dr, dc in knight_moves:
+            r, c = row + dr, col + dc
+            if self.is_on_board(r, c):
+                if board is None:
+                    break
+                target = board[r][c]
+                if target is not None and target.value == 2 * -sign:
+                    return True
+
+        # Pawn capture direction
+        for dc in [-1, 1]:
+            r, c = row - sign, col + dc
+            if self.is_on_board(r, c):
+                if board is None:
+                    break
+                target = board[r][c]
+                if target is not None and target.value == 1 * -sign:
+                    return True
+
         return False
 
     def directionscheck(self, directions, board):
