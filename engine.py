@@ -1,4 +1,4 @@
-
+from board import *
 
 # Constants
 PAWN = 1
@@ -13,16 +13,16 @@ def is_on_board(row, col):
     return 0 <= row < 8 and 0 <= col < 8
 
 
-def print_board(board):
-    print("    0 1 2 3 4 5 6 7")
-    print("   ----------------")
-    for row in range(8):
-        print(row, "|", end=' ')
-        for col in range(8):
-            print(board[row][col], end=' ')
-        print("|")
-    print("   ----------------")
-    print("    0 1 2 3 4 5 6 7")
+#def print_board(board):
+#    print("    0 1 2 3 4 5 6 7")
+#    print("   ----------------")
+ #   for row in range(8):
+  #      print(row, "|", end=' ')
+   #     for col in range(8):
+    #        print(board[row][col], end=' ')
+     #   print("|")
+    #print("   ----------------")
+    #print("    0 1 2 3 4 5 6 7")
 
 
 def print_coordinates():
@@ -146,7 +146,9 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
-
+    def is_check(self,board):
+        if self.under_attack(board, self.row, self.col)== True:
+            return True
 class Bishop(Piece):
     def legal_moves(self, board):
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]  # diagonal directions
@@ -163,7 +165,7 @@ class Rook(Piece):
 
 class Queen(Piece):
     def legal_moves(self, board):
-        legal_moves = []
+
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1)]
         legal_moves = self.directionscheck(directions, board)
         return legal_moves
@@ -216,8 +218,4 @@ class Pawn(Piece):
         return legal_moves
 
 
-def main():
 
-
-
-main()

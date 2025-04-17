@@ -36,15 +36,23 @@ pieces = [
     Queen(-5, 0, 3),
     Queen(5, 7, 3),
 ]
-
+testpieces = [
+    King(6, 3, 3),
+    Rook(-4, 0, 1)
+]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
 
     for piece in pieces:
         board[piece.row][piece.col] = piece
+    return board
 
-
-def print_board():
+def initialise_test_board():
+    board = [[None for _ in range(8)] for _ in range(8)]
+    for piece in testpieces:
+        board[piece.row][piece.col] = piece
+    return board
+def print_board(board):
     print("  0 1 2 3 4 5 6 7")
     print("-----------------")
     for r in range(8):
