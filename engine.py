@@ -77,6 +77,58 @@ class Piece:
     def is_on_board(self, row, col):
         return 0 <= row < 8 and 0 <= col < 8
 
+    def under_attack(self, board, row, col):
+        directions =[(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1),(2, 1), (2, -1), (1, -2), (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
+        sign = 1 if self.value > 0 else -1
+        for dr, dc in directions:
+            r, c = row, col
+            while True:
+                r += dr
+                c += dc
+                if not self.is_on_board(r, c):
+                    break
+                target = board[r][c]
+                if sign > 0 and target > 0:
+                    break
+                if sign < 0 and target < 0:
+                    break
+                if abs(dr) == 1 and abs(dc) == 1 and target in (3, 5)*sign:
+                    return True
+                if (dr == 0 or dc == 0) and target in (4, 5)*sign:
+                    return True
+                if (abs(dr), abs(dc)) in [(2, 1), (1, 2)] and target == 2*sign:
+                    return True
+                if abs(dc) == 1 and dr == -1*sign and target == 1*sign:
+                    return True
+        return False
+
+    def is_defended(self, board, row, col):
+        directions = [(1, 0), (-1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1), (2, 1), (2, -1), (1, -2),
+                      (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
+        sign = -1 if self.value > 0 else 1
+        for dr, dc in directions:
+            r, c = row, col
+            while True:
+                r += dr
+                c += dc
+                if not self.is_on_board(r, c):
+                    break
+                target = board[r][c]
+                if sign > 0 and target < 0:
+                    break
+                if sign < 0 and target > 0:
+                    break
+
+                if abs(dr) == 1 and abs(dc) == 1 and target in (3, 5) * sign:
+                        return True
+                if (dr == 0 or dc == 0) and target in (4, 5) * sign:
+                        return True
+                if (abs(dr), abs(dc)) in [(2, 1), (1, 2)] and target == 2 * sign:
+                        return True
+                if abs(dc) == 1 and dr == -1 * sign and target == 1 * sign:
+                        return True
+        return False
+
     def directionscheck(self, directions, board):
         legal_moves = []
         for dr, dc in directions:
@@ -118,8 +170,6 @@ class King(Piece):
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
         return legal_moves
-    def is_check(self):
-        return True
 
 class Bishop(Piece):
     def legal_moves(self, board):

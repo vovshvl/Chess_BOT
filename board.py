@@ -51,6 +51,6 @@ def print_board():
         print(f"{r}|", end="")
         for c in range(8):
             value = board[r][c]
-            print(f"{value.value if value else '.':2} ", end="")  # Or use value.symbol()
+            print(f"{value.value if value else '0':2} ", end="")  # Or use value.symbol()
         print()
     print("-----------------")
