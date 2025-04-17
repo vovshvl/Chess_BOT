@@ -38,30 +38,6 @@ def empty_board():
     return board
 
 
-def board_setup():
-    board = [[0 for _ in range(8)] for _ in range(8)]
-    for i in range(8):
-        board[1][i] = -PAWN
-        board[6][i] = PAWN
-    board[0][0] = -ROOK
-    board[0][7] = -ROOK
-    board[7][7] = ROOK
-    board[7][0] = ROOK
-    board[0][6] = -KNIGHT
-    board[0][1] = -KNIGHT
-    board[7][6] = KNIGHT
-    board[7][1] = KNIGHT
-    board[0][2] = -BISHOP
-    board[7][2] = BISHOP
-    board[7][5] = BISHOP
-    board[0][5] = -BISHOP
-    board[0][4] = -KING
-    board[7][4] = KING
-    board[0][3] = -QUEEN
-    board[7][3] = QUEEN
-    return board
-
-
 class Piece:
 
     def __init__(self, value, row, col, has_moved=False):
@@ -242,14 +218,6 @@ class Pawn(Piece):
 
 def main():
 
-    board = empty_board()
-    print_board(board)
-    board = board_setup()
-    # Test: white king at 5, 5
-
-    #print_board(board)
-    #print(b.legal_moves(board))
-    print_coordinates()
 
 
 main()
