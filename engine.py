@@ -189,6 +189,31 @@ class Piece:
             return False
         return (target > 0) == (self.value > 0)
 
+    def move(self, board, new_row, new_col):
+        if not self.is_on_board(new_row, new_col):
+            print("Move out of bounds.")
+            return False
+
+        target = board[new_row][new_col]
+
+        # Optional: add legality checks, like not capturing own pieces
+        if target is not None and (target.value * self.value > 0):
+            print("Cannot capture your own piece.")
+            return False
+
+        # Update board: clear old position
+        board[self.row][self.col] = None
+
+        # Capture opponent (if any)
+        if target is not None:
+            print(f"Captured: {target}")
+
+        # Move piece
+        self.row = new_row
+        self.col = new_col
+        board[new_row][new_col] = self
+
+        return True
 
 class King(Piece):
     def legal_moves(self, board):

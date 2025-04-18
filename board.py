@@ -1,4 +1,4 @@
-from engine import King
+from engine import King, Piece
 from engine import Queen
 from engine import Bishop
 from engine import Knight
@@ -38,7 +38,7 @@ pieces = [
 ]
 testpieces = [
     King(6, 3, 3),
-    Rook(-4, 0, 1)
+    Rook(-4, 3, 2)
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
@@ -46,6 +46,7 @@ def initialise_board():
     for piece in pieces:
         board[piece.row][piece.col] = piece
     return board
+
 
 def initialise_test_board():
     board = [[None for _ in range(8)] for _ in range(8)]

@@ -1,11 +1,9 @@
-from board import print_board, initialise_board,initialise_test_board
+from board import *
 from engine import *
 board = initialise_test_board()
 
 print_board(board)
-
-if board[3][3].is_check(board)== True:
-    print('defended')
-else:
-    print("false")
-
+Piece=board[3][3]
+Piece.move(board,3,4)
+print(Piece)
+print_board(board)
