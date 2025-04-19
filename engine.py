@@ -189,7 +189,7 @@ class Piece:
             return False
         return (target > 0) == (self.value > 0)
 
-    def move(self, board, new_row, new_col):
+    def move(self, board, new_row, new_col, promotion=None):
         if not self.is_on_board(new_row, new_col):
             print("Move out of bounds.")
             return False
@@ -213,9 +213,31 @@ class Piece:
         self.col = new_col
         board[new_row][new_col] = self
 
+        # === Pawn Promotion ===
+        if abs(self.value) == 1:  # If it's a pawn
+            if (self.value > 0 and new_row == 0) or (self.value < 0 and new_row == 7):
+                sign = 1 if self.value > 0 else -1
+                if promotion == "q":
+                    board[new_row][new_col] = Queen(sign * 5, new_row, new_col)
+                elif promotion == "r":
+                    board[new_row][new_col] = Rook(sign * 4, new_row, new_col)
+                elif promotion == "b":
+                    board[new_row][new_col] = Bishop(sign * 3, new_row, new_col)
+                elif promotion == "n":
+                    board[new_row][new_col] = Knight(sign * 2, new_row, new_col)
+                else:
+                    board[new_row][new_col] = Queen(sign * 5, new_row, new_col)  # default to queen
+                print("Pawn promoted!")
+
         return True
 
+
 class King(Piece):
+
+
+    def __init__(self, value, row, col, has_moved=False):
+        super().__init__(value, row, col, has_moved)
+
     def legal_moves(self, board):
         legal_moves = []
         for dr in range(-1, 2):
@@ -273,6 +295,7 @@ class Pawn(Piece):
             while True:
                 r += dr
                 c += dc
+
                 if not self.is_on_board(r, c):
                     break
                 target = board[r][c]
@@ -280,6 +303,7 @@ class Pawn(Piece):
                     legal_moves.append((r, c))
                 else:
                     break
+
         for dr, dc in attacks:
             r, c = self.row, self.  col
             while True:
@@ -297,6 +321,13 @@ class Pawn(Piece):
 
 
         return legal_moves
+
+def castling(board ):
+    board[0][6] = King
+    if King.is_check == False and King.has_moved==False:
+        if board.under_attack[0][0] == False and Rook(board).has_moved==False:
+            if Rook.legal_moves(board) == False :
+                print('h')
 
 
 
