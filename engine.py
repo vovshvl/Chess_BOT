@@ -211,6 +211,7 @@ class Piece:
         # Move piece
         self.row = new_row
         self.col = new_col
+        self.has_moved = True
         board[new_row][new_col] = self
 
         # === Pawn Promotion ===
@@ -248,6 +249,27 @@ class King(Piece):
                 nc = self.  col + dc
                 if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
                     legal_moves.append((nr, nc))
+        if not self.has_moved:
+            sign = 1 if self.value > 0 else -1
+            row = self.row
+
+            # Kingside
+            kingside_clear = board[row][self.col + 1] is None and board[row][self.col + 2] is None
+            kingside_rook = board[row][7]
+            if kingside_clear and isinstance(kingside_rook, Rook) and not kingside_rook.has_moved:
+                # You could also check under_attack(board, row, col), col+1, col+2
+                legal_moves.append((row, self.col + 2))  # Castling move
+
+            # Queenside
+            queenside_clear = (board[row][self.col - 1] is None and
+                               board[row][self.col - 2] is None and
+                               board[row][self.col - 3] is None)
+            queenside_rook = board[row][0]
+            if queenside_clear and isinstance(queenside_rook, Rook) and not queenside_rook.has_moved:
+                # Optional: under_attack check
+                legal_moves.append((row, self.col - 2))  # Castling move
+
+
         return legal_moves
     def is_check(self,board):
         if self.under_attack(board, self.row, self.col)== True:
@@ -322,12 +344,6 @@ class Pawn(Piece):
 
         return legal_moves
 
-def castling(board ):
-    board[0][6] = King
-    if King.is_check == False and King.has_moved==False:
-        if board.under_attack[0][0] == False and Rook(board).has_moved==False:
-            if Rook.legal_moves(board) == False :
-                print('h')
 
 
 

@@ -37,8 +37,8 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(6, 3, 3),
-    Rook(-4, 3, 2)
+    King(6, 0,6),
+    Rook(4, 0, 0)
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
