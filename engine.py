@@ -8,6 +8,7 @@ ROOK = 4
 QUEEN = 5
 KING = 6
 
+moves_history = []
 
 def is_on_board(row, col):
     return 0 <= row < 8 and 0 <= col < 8
@@ -234,6 +235,8 @@ class Piece:
                     board[new_row][new_col] = Queen(sign * 5, new_row, new_col)  # default to queen
                 print("Pawn promoted!")
 
+
+        #move_history.append(((new_row, ),()))
         return True
 
 

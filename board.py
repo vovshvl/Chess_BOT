@@ -55,6 +55,10 @@ def initialise_test_board():
     for piece in testpieces:
         board[piece.row][piece.col] = piece
     return board
+
+def make_move():
+ print('in dev')
+
 def print_board(board):
     print("  0 1 2 3 4 5 6 7")
     print("-----------------")
