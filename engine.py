@@ -53,9 +53,8 @@ class Piece:
     def is_on_board(self, row, col):
         return 0 <= row < 8 and 0 <= col < 8
 
-    def under_attack(self, board, row, col):
-        if board is None:
-            raise ValueError("Board cannot be None")
+    def is_attacked(self, board, row, col):
+
 
         sign = 1 if self.value > 0 else -1  # Positive = white, Negative = black
 
@@ -163,6 +162,7 @@ class Piece:
 
     def directionscheck(self, directions, board):
         legal_moves = []
+        attacks =[]
         for dr, dc in directions:
             r, c = self.row, self.col
             while True:
@@ -172,24 +172,28 @@ class Piece:
                     break
 
                 target = board[r][c]
-                if target == 0:
+                if target == 0 or target is None:
                     legal_moves.append((r, c))
-                elif (target > 0) != (self.value > 0):
-                    legal_moves.append((r, c))  # мне кажется надо так же указывать фигуру
+                elif (target.value > 0) != (self.value > 0):
+                    legal_moves.append((r, c))
+                    attacks.append((target,r,c))
                     break  # вражеская фигура
                 else:
                     break  # своя фигура
-        return legal_moves
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
 
     def collision(self, row, col, board):
         if not self.is_on_board(row, col):
             return False
         target = board[row][col]
-        if target == 0:
+        if target == 0 or target is None:
             return False
-        return (target > 0) == (self.value > 0)
+        return (target.value > 0) == (self.value > 0)
 
-    def move(self, board, new_row, new_col, promotion=None):
+    def move(self, board, new_row, new_col, promotion=None, turn=1):
         if not self.is_on_board(new_row, new_col):
             print("Move out of bounds.")
             return False
@@ -213,7 +217,7 @@ class Piece:
         self.col = new_col
         self.has_moved = True
         board[new_row][new_col] = self
-
+        turn = turn * -1
         # === Pawn Promotion ===
         if abs(self.value) == 1:  # If it's a pawn
             if (self.value > 0 and new_row == 0) or (self.value < 0 and new_row == 7):
@@ -234,84 +238,128 @@ class Piece:
 
 
 class King(Piece):
-
-
-    def __init__(self, value, row, col, has_moved=False):
-        super().__init__(value, row, col, has_moved)
-
     def legal_moves(self, board):
         legal_moves = []
+        attacks = []
+
+        # Normal king moves
         for dr in range(-1, 2):
             for dc in range(-1, 2):
                 if dr == 0 and dc == 0:
                     continue
-                nr = self.  row + dr
-                nc = self.  col + dc
-                if self.is_on_board(nr, nc) and not self.collision(nr, nc, board):
+                nr = self.row + dr
+                nc = self.col + dc
+
+                if not self.is_on_board(nr, nc):
+                    continue
+
+                target = board[nr][nc]
+
+                if target is None or target == 0:
                     legal_moves.append((nr, nc))
+                elif (target.value * self.value) < 0:  # Enemy piece
+                    legal_moves.append((nr, nc))
+                    attacks.append((target, nr, nc))
+
+        # Castling
         if not self.has_moved:
             sign = 1 if self.value > 0 else -1
             row = self.row
 
-            # Kingside
-            kingside_clear = board[row][self.col + 1] is None and board[row][self.col + 2] is None
-            kingside_rook = board[row][7]
-            if kingside_clear and isinstance(kingside_rook, Rook) and not kingside_rook.has_moved:
-                # You could also check under_attack(board, row, col), col+1, col+2
-                legal_moves.append((row, self.col + 2))  # Castling move
+            # Kingside castling
+            if (self.col + 2 < 8 and
+                    board[row][self.col + 1] in [0, None] and
+                    board[row][self.col + 2] in [0, None]):
+                kingside_rook = board[row][7]
+                if (isinstance(kingside_rook, Rook) and
+                        not kingside_rook.has_moved and
+                        not self.is_attacked(board, row, self.col + 1) and
+                        not self.is_attacked(board, row, self.col + 2)):
+                    legal_moves.append((row, self.col + 2))
 
-            # Queenside
-            queenside_clear = (board[row][self.col - 1] is None and
-                               board[row][self.col - 2] is None and
-                               board[row][self.col - 3] is None)
-            queenside_rook = board[row][0]
-            if queenside_clear and isinstance(queenside_rook, Rook) and not queenside_rook.has_moved:
-                # Optional: under_attack check
-                legal_moves.append((row, self.col - 2))  # Castling move
+            # Queenside castling
+            if (self.col - 2 >= 0 and
+                    board[row][self.col - 1] in [0, None] and
+                    board[row][self.col - 2] in [0, None] and
+                    board[row][self.col - 3] in [0, None]):
+                queenside_rook = board[row][0]
+                if (isinstance(queenside_rook, Rook) and
+                        not queenside_rook.has_moved and
+                        not self.is_attacked(board, row, self.col - 1) and
+                        not self.is_attacked(board, row, self.col - 2)):
+                    legal_moves.append((row, self.col - 2))
 
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
 
-        return legal_moves
-    def is_check(self,board):
-        if self.under_attack(board, self.row, self.col)== True:
+    def is_check(self, board):
+        if self.is_attacked(board, self.row, self.col) == True:
             return True
+
+
 class Bishop(Piece):
     def legal_moves(self, board):
         directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]  # diagonal directions
-        legal_moves = self.directionscheck(directions, board)
-        return legal_moves
-
+        result = self.directionscheck(directions, board)
+        legal_moves = result['legal_moves']
+        attacks = result['attacks']
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
 
 class Rook(Piece):
     def legal_moves(self, board):
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
-        legal_moves = self.directionscheck(directions, board)
-        return legal_moves
-
+        result = self.directionscheck(directions, board)
+        legal_moves = result['legal_moves']
+        attacks = result['attacks']
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
 
 class Queen(Piece):
     def legal_moves(self, board):
 
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1),(-1, -1), (-1, 1), (1, -1), (1, 1)]
-        legal_moves = self.directionscheck(directions, board)
-        return legal_moves
 
+        result = self.directionscheck(directions, board)
+        legal_moves = result['legal_moves']
+        attacks = result['attacks']
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
 
 class Knight(Piece):
      def legal_moves(self, board):
          directions = [(2, 1), (2, -1), (1, -2), (1, 2), (-1, 2), (-1, -2), (-2, -1), (-2, 1)]
-         legal_moves = self.directionscheck(directions, board)
-         return legal_moves
-
+         result = self.directionscheck(directions, board)
+         legal_moves = result['legal_moves']
+         attacks = result['attacks']
+         return {
+             'legal_moves': legal_moves,
+             'attacks': attacks
+         }
 
 class Pawn(Piece):
     def legal_moves(self, board):
         legal_moves = []
         if self.value >0:
-            directions = [(-1, 0)]
-            attacks = [(-1, 1), (-1, -1)]
+            if self.row == 1:
+                directions = [(-1, 0), (-2,0)]
+            else:
+                directions = [(-1, 0)]
+            attack_direction= [(-1, 1), (-1, -1)]
         else:
-            directions = [(1, 0)]
-            attacks = [(1, 1),(1, -1)]
+            if self.row == 6:
+                directions = [(1, 0), (2,0)]
+            else:
+                directions = [(1, 0)]
+            attack_direction = [(1, 1),(1, -1)]
         for dr, dc in directions:
             r, c = self.row, self.  col
             while True:
@@ -325,24 +373,39 @@ class Pawn(Piece):
                     legal_moves.append((r, c))
                 else:
                     break
-
-        for dr, dc in attacks:
-            r, c = self.row, self.  col
+        attacks =[]
+        for dr, dc in attack_direction:
+            r, c = self.row, self.col
             while True:
                 r += dr
                 c += dc
                 if not self.is_on_board(r, c):
                     break
                 target = board[r][c]
+                if target == 0 or target is None:
+                    break
                 if self.value > 0:
                     if target < 0:
                         legal_moves.append((r, c))
+                        attacks.append((target, r, c))
+
                 else:
                     if target > 0:
                         legal_moves.append((r, c))
+                        attacks.append((target, r, c))
+
+        return {
+            'legal_moves': legal_moves,
+            'attacks': attacks
+        }
+
+    class Move():
+        def __init__(self, from_square, to_square, promotion = None):
+            self.from_square = from_square
+            self.to_square = to_square
 
 
-        return legal_moves
+
 
 
 
