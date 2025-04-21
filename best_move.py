@@ -49,6 +49,7 @@ def evaluate_piece_at(row, col, board,map):
 
     return base_score * desirability_bonus
 
+"""
 def evaluate_board(board):
     board_score_white=0
     board_score_black = 0
@@ -89,6 +90,7 @@ def evaluate_board(board):
                             map = DesirabilityMap(desirability_king)
                     board_score_black+=evaluate_piece_at(row, col, board, map)
     return board_score_white, board_score_black
+"""
 def all_moves(board):
     all_moves = []
     for row in range(8):
@@ -104,7 +106,7 @@ def all_moves(board):
             else:
                 print(f"Warning: piece at ({row}, {col}) returned malformed legal_moves")
     return all_moves
-print(all_moves(board))
+#print(all_moves(board))
 
 def minmax(board, all_moves, depth, alpha, beta, max_player):
     #Alpha–beta pruning
@@ -122,7 +124,7 @@ def minmax(board, all_moves, depth, alpha, beta, max_player):
 
 
 
-print(evaluate_board(board))
+#print(evaluate_board(board))
 
-duration = timeit.timeit(lambda: evaluate_board(board), number=64000)
-print(f"Time for 1,000,000 asks: {duration:.4f} seconds")
+#duration = timeit.timeit(lambda: evaluate_board(board), number=64000)
+#print(f"Time for 1,000,000 asks: {duration:.4f} seconds")

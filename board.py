@@ -3,7 +3,7 @@ from engine import Queen
 from engine import Bishop
 from engine import Knight
 from engine import Rook
-from engine import Pawn
+from pieces import Pawn
 
 pieces = [
     # Pawns
@@ -37,10 +37,10 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(6, 0,4),
+    Pawn(-1, 1, 1),
+    Rook(4, 2, 0),
+    Rook(4, 2, 2)
 
-    Queen(4, 4, 6),
-    Knight(-2, 0, 1),
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
