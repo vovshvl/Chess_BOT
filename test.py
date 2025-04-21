@@ -1,13 +1,13 @@
 from board import *
 from engine import *
-from best_move import all_moves
+from best_move import *
 
-board = initialise_board()
+board = initialise_test_board()
 print_board(board)
 
-i = 0
-for move in all_moves(board, 1):
-    #print(move.from_square)
-    print(move.to_square)
-    i = i+1
-print(i)
+move = all_moves(board, -1)[11]
+make_move(board, move)
+print_board(board)
+
+undo_move(board, move)
+print_board(board)

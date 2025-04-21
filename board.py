@@ -37,9 +37,7 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(6, 7, 4),
-    Rook(4, 0, 0),
-    Rook(4, 0, 7)
+    Rook(-5, 0, 0)
 
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
@@ -56,8 +54,30 @@ def initialise_test_board():
         board[piece.row][piece.col] = piece
     return board
 
-def make_move():
- print('in dev')
+def make_move(board, move):
+    from_row, from_col = move.from_square
+    to_row, to_col = move.to_square
+    move.piece_captured = board[to_row][to_col]
+
+    moving_piece = board[from_row][from_col]
+
+    board[to_row][to_col] = moving_piece
+    moving_piece.row = to_row
+    moving_piece.col = to_col
+    board[from_row][from_col] = None
+
+def undo_move(board, move):
+    from_row, from_col = move.from_square
+    to_row, to_col = move.to_square
+
+    moving_piece = board[to_row][to_col]
+
+    board[from_row][from_col] = moving_piece
+    moving_piece.row = from_row
+    moving_piece.col = from_col
+    board[to_row][to_col] = None
+
+
 
 def print_board(board):
     print("  0 1 2 3 4 5 6 7")
