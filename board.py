@@ -1,8 +1,8 @@
-from engine import King, Piece
-from engine import Queen
-from engine import Bishop
-from engine import Knight
-from engine import Rook
+from pieces import King, Piece
+from pieces import Queen
+from pieces import Bishop
+from pieces import Knight
+from pieces import Rook
 from pieces import Pawn
 
 pieces = [
@@ -37,9 +37,9 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    Pawn(-1, 1, 1),
-    Rook(4, 2, 0),
-    Rook(4, 2, 2)
+    King(6, 7, 4),
+    Rook(4, 0, 0),
+    Rook(4, 0, 7)
 
 ]
 board = [[None for _ in range(8)] for _ in range(8)]

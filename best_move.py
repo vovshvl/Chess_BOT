@@ -91,14 +91,19 @@ def evaluate_board(board):
                     board_score_black+=evaluate_piece_at(row, col, board, map)
     return board_score_white, board_score_black
 """
-def all_moves(board):
+def all_moves(board, color):
     all_moves = []
     for row in range(8):
         for col in range(8):
             piece = board[row][col]
             if piece in (None, 0):
                 continue  # Skip empty squares
-
+            if color>0:
+                if piece.value<0:
+                    break
+            else:
+                if piece.value>0:
+                    break
             result = piece.legal_moves(board)
 
             if isinstance(result, dict) and isinstance(result.get('legal_moves'), list):
