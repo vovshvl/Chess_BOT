@@ -236,13 +236,17 @@ def minmax(board, moves, depth, alpha, beta, turn):
                     break
             return max_eval, best_move
         else:
+
             min_eval = float('inf')
+            if not moves:
+                eval = evaluate_board(board)  # fallback for no moves
+                return eval, None
             for move in moves:
                 make_move(board, move)
                 possible_moves = all_moves(board,turn*-1)
                 eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
                 undo_move(board, move)
-                if eval > min_eval:
+                if eval < min_eval:
                     min_eval = eval
                     best_move = move
                 beta = min(beta, eval)

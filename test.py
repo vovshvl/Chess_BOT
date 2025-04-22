@@ -23,7 +23,8 @@ def test_allmoves():
 
 def test_minmax():
     board = initialise_board()
-    make_move(board,Move((6,4),(4,4)))
+    #make_move(board,Move((6,4),(4,4)))
+    #make_move(board, Move((1,4), (3,4)))
     print_board(board)
     print (evaluate_board(board))
     moves = all_moves(board, 1)
