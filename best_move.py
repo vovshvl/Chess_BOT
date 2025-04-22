@@ -123,7 +123,6 @@ def mirror_for_black(white_table):
         [white_table[i * 8:(i + 1) * 8] for i in reversed(range(8))],
         []
     )
-print(mirror_for_black(desirability_knight_black))
 class DesirabilityMap:
     def __init__(self, data=None):
         self.data = bytearray(data if data else [0] * 64)
@@ -214,7 +213,7 @@ def all_moves(board, color):
     return all_moves
 #print(all_moves(board))
 
-def minmax(board, all_moves, depth, alpha, beta, turn):
+def minmax(board, moves, depth, alpha, beta, turn):
     #Alpha–beta pruning
     best_move = None
     eval = 0
@@ -255,7 +254,7 @@ def minmax(board, all_moves, depth, alpha, beta, turn):
 
 
 
-print(evaluate_board(board))
+#print(evaluate_board(board))
 
 #duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
 #print(f"Time for 100000 asks: {duration:.4f} seconds")

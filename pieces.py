@@ -241,7 +241,7 @@ class Pawn(Piece):
                 if target == 0 or target is None:
                     break
                 if self.value > 0:
-                    if target < 0:
+                    if target.value < 0:
                         legal_moves.append(Move((self.row, self.col), (r,c)))
                         attacks.append(Move((self.row, self.col), (r,c)))
 
