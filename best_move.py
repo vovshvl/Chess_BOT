@@ -1,16 +1,129 @@
-import random
+
 import timeit
-from board import *
+
 from engine import *
 
-desirability_pawn = [10 for _ in range(64)]
-desirability_rook = [50 for _ in range(64)]
-desirability_queen = [90 for _ in range(64)]
-desirability_king = [120 for _ in range(64)]
-desirability_bishop = [30 for _ in range(64)]
-desirability_knight = [30 for _ in range(64)]
+desirability_pawn_black = [
+    0, 0, 0, 0, 0, 0, 0, 0,
+    15, 15, 15, 20, 20, 15, 15, 15,
+    18, 18, 20, 25, 25, 20, 18, 18,
+    22, 22, 25, 30, 30, 25, 22, 22,
+    23, 23, 26, 32, 32, 26, 23, 23,
+    24, 24, 28, 35, 35, 28, 24, 24,
+    40, 40, 45, 45, 45, 45, 40, 40,
+    90,  90, 90, 90, 90, 90,  90, 90
+]
+desirability_rook_black = [
+    50, 50, 52, 54, 54, 52, 50, 50,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    53, 55, 57, 60, 60, 57, 55, 53,
+    53, 55, 57, 60, 60, 57, 55, 53,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    52, 52, 52, 52, 52, 52, 52, 52,
+    50, 50, 50, 50, 50, 50, 50, 50
+]
+desirability_queen_black =  [
+    88, 88, 89, 90, 90, 89, 88, 88,
+    88, 90, 92, 94, 94, 92, 90, 88,
+    89, 92, 95, 100, 100, 95, 92, 89,
+    90, 94, 100, 105, 105, 100, 94, 90,
+    90, 94, 100, 105, 105, 100, 94, 90,
+    89, 92, 95, 100, 100, 95, 92, 89,
+    88, 90, 92, 94, 94, 92, 90, 88,
+    88, 88, 89, 90, 90, 89, 88, 88
+]
+desirability_king_black = [
+    118, 118, 118, 117, 117, 118, 118, 118,
+    116, 117, 118, 119, 119, 118, 117, 116,
+    115, 116, 117, 118, 118, 117, 116, 115,
+    114, 115, 116, 117, 117, 116, 115, 114,
+    113, 114, 115, 116, 116, 115, 114, 113,
+    112, 113, 114, 115, 115, 114, 113, 112,
+    111, 112, 113, 114, 114, 113, 112, 111,
+    110, 111, 112, 113, 113, 112, 111, 110
+]
+desirability_bishop_black = [
+    20, 22, 25, 30, 30, 25, 22, 20,
+    22, 26, 30, 35, 35, 30, 26, 22,
+    25, 30, 35, 40, 40, 35, 30, 25,
+    30, 35, 40, 50, 50, 40, 35, 30,
+    30, 35, 40, 50, 50, 40, 35, 30,
+    25, 30, 35, 40, 40, 35, 30, 25,
+    22, 26, 30, 35, 35, 30, 26, 22,
+    20, 22, 25, 30, 30, 25, 22, 20
+]
+desirability_knight_black = [
+    15, 20, 25, 30, 30, 25, 20, 15,
+    20, 30, 35, 40, 40, 35, 30, 20,
+    25, 35, 45, 50, 50, 45, 35, 25,
+    30, 40, 50, 60, 60, 50, 40, 30,
+    30, 40, 50, 60, 60, 50, 40, 30,
+    25, 35, 45, 50, 50, 45, 35, 25,
+    20, 30, 35, 40, 40, 35, 30, 20,
+    15, 20, 25, 30, 30, 25, 20, 15
+]
+desirability_pawn_white = [
+    90, 90, 90, 90, 90, 90, 90, 90,
+    40, 40, 45, 45, 45, 45, 40, 40,
+    24, 24, 28, 35, 35, 28, 24, 24,
+    23, 23, 26, 32, 32, 26, 23, 23,
+    22, 22, 25, 30, 30, 25, 22, 22,
+    18, 18, 20, 25, 25, 20, 18, 18,
+    15, 15, 15, 20, 20, 15, 15, 15,
+    0, 0, 0, 0, 0, 0, 0, 0]
+desirability_rook_white = [
+    50, 50, 50, 50, 50, 50, 50, 50,
+    52, 52, 52, 52, 52, 52, 52, 52,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    53, 55, 57, 60, 60, 57, 55, 53,
+    53, 55, 57, 60, 60, 57, 55, 53,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    52, 54, 56, 58, 58, 56, 54, 52,
+    50, 50, 52, 54, 54, 52, 50, 50]
+desirability_queen_white = [
+    88, 88, 89, 90, 90, 89, 88, 88,
+    88, 90, 92, 94, 94, 92, 90, 88,
+    89, 92, 95, 100, 100, 95, 92, 89,
+    90, 94, 100, 105, 105, 100, 94, 90,
+    90, 94, 100, 105, 105, 100, 94, 90,
+    89, 92, 95, 100, 100, 95, 92, 89,
+    88, 90, 92, 94, 94, 92, 90, 88,
+    88, 88, 89, 90, 90, 89, 88, 88]
+desirability_king_white = [
+    110, 111, 112, 113, 113, 112, 111, 110,
+    111, 112, 113, 114, 114, 113, 112, 111,
+    112, 113, 114, 115, 115, 114, 113, 112,
+    113, 114, 115, 116, 116, 115, 114, 113,
+    114, 115, 116, 117, 117, 116, 115, 114,
+    115, 116, 117, 118, 118, 117, 116, 115,
+    116, 117, 118, 119, 119, 118, 117, 116,
+    118, 118, 118, 117, 117, 118, 118, 118]
+desirability_bishop_white = [
+    20, 22, 25, 30, 30, 25, 22, 20,
+    22, 26, 30, 35, 35, 30, 26, 22,
+    25, 30, 35, 40, 40, 35, 30, 25,
+    30, 35, 40, 50, 50, 40, 35, 30,
+    30, 35, 40, 50, 50, 40, 35, 30,
+    25, 30, 35, 40, 40, 35, 30, 25,
+    22, 26, 30, 35, 35, 30, 26, 22,
+    20, 22, 25, 30, 30, 25, 22, 20]
+desirability_knight_white = [
+    15, 20, 25, 30, 30, 25, 20, 15,
+    20, 30, 35, 40, 40, 35, 30, 20,
+    25, 35, 45, 50, 50, 45, 35, 25,
+    30, 40, 50, 60, 60, 50, 40, 30,
+    30, 40, 50, 60, 60, 50, 40, 30,
+    25, 35, 45, 50, 50, 45, 35, 25,
+    20, 30, 35, 40, 40, 35, 30, 20,
+    15, 20, 25, 30, 30, 25, 20, 15]
 
-
+def mirror_for_black(white_table):
+    return sum(
+        [white_table[i * 8:(i + 1) * 8] for i in reversed(range(8))],
+        []
+    )
+print(mirror_for_black(desirability_knight_black))
 class DesirabilityMap:
     def __init__(self, data=None):
         self.data = bytearray(data if data else [0] * 64)
@@ -32,24 +145,24 @@ class DesirabilityMap:
 
 board = initialise_board()
 # Show the full map as a grid
-print("Desirability Heatmap:")
+
 
 
 
 
 desirability_maps = {
-    1: DesirabilityMap(desirability_pawn),
-    2: DesirabilityMap(desirability_knight),
-    3: DesirabilityMap(desirability_bishop),
-    4: DesirabilityMap(desirability_rook),
-    5: DesirabilityMap(desirability_queen),
-    6: DesirabilityMap(desirability_king),
-    -1: DesirabilityMap(desirability_pawn),
-    -2: DesirabilityMap(desirability_knight),
-    -3: DesirabilityMap(desirability_bishop),
-    -4: DesirabilityMap(desirability_rook),
-    -5: DesirabilityMap(desirability_queen),
-    -6: DesirabilityMap(desirability_king),
+    1: DesirabilityMap(desirability_pawn_white),
+    2: DesirabilityMap(desirability_knight_white),
+    3: DesirabilityMap(desirability_bishop_white),
+    4: DesirabilityMap(desirability_rook_white),
+    5: DesirabilityMap(desirability_queen_black),
+    6: DesirabilityMap(desirability_king_white),
+    -1: DesirabilityMap(desirability_pawn_black),
+    -2: DesirabilityMap(desirability_knight_black),
+    -3: DesirabilityMap(desirability_bishop_black),
+    -4: DesirabilityMap(desirability_rook_white),
+    -5: DesirabilityMap(desirability_queen_white),
+    -6: DesirabilityMap(desirability_king_black),
 }
 
 def evaluate_piece_at(row, col, board,map):
@@ -77,7 +190,7 @@ def evaluate_board(board):
             else:
                     map = desirability_maps[piece.value]
                     board_score_black+=evaluate_piece_at(row, col, board, map)
-    return board_score_white, board_score_black
+    return board_score_white - board_score_black
 
 def all_moves(board, color):
     all_moves = []
@@ -101,23 +214,40 @@ def all_moves(board, color):
     return all_moves
 #print(all_moves(board))
 
-def minmax(board, all_moves, depth, alpha, beta, max_player):
+def minmax(board, all_moves, depth, alpha, beta, turn):
     #Alpha–beta pruning
-    if max_player == True:
+    if turn>0:
         max_eval = -float('inf')
         for move in all_moves:
-            new_board = move(board, move[0], move[1])
-            eval = minmax(board, all_moves, depth-1, alpha, beta, False)
-            max_eval = max(max_eval, eval)
+
+            make_move(board, move)
+            eval,_ = minmax(board, all_moves, depth-1, alpha, beta, turn*-1)
+            undo_move(board, move)
+            if eval > max_eval:
+                max_eval = eval
+                best_move = move
             alpha = max(alpha, eval)
             if beta <= alpha:
                 break
-        return max_eval
+        return max_eval, best_move
+    else:
+        min_eval = float('inf')
+        for move in all_moves:
+            make_move(board, move)
+            eval, _ = minmax(board, all_moves, depth-1, alpha, beta, turn*-1)
+            undo_move(board, move)
+            if eval > min_eval:
+                min_eval = eval
+                best_move = move
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+            return min_eval, best_move
 
 
 
 
-#print(evaluate_board(board))
+print(evaluate_board(board))
 
 #duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
 #print(f"Time for 100000 asks: {duration:.4f} seconds")
