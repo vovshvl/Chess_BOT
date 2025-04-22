@@ -119,7 +119,7 @@ def minmax(board, all_moves, depth, alpha, beta, max_player):
 
 #print(evaluate_board(board))
 
-duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
-print(f"Time for 100000 asks: {duration:.4f} seconds")
-for i in range(1, 100):
-    print(timeit.timeit(lambda: evaluate_board(board), number=100000))
+#duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
+#print(f"Time for 100000 asks: {duration:.4f} seconds")
+#for i in range(1, 100):
+    #print(timeit.timeit(lambda: evaluate_board(board), number=100000))

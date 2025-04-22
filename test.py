@@ -1,11 +1,13 @@
 from board import *
 from engine import *
 from best_move import *
+from Move import Move
 
 board = initialise_test_board()
 print_board(board)
 
-move = all_moves(board, -1)[11]
+move = all_moves(board, 1)[15]
+#move = Move((1, 1), (0, 1), None, Queen(6, 0, 1))
 make_move(board, move)
 print_board(board)
 

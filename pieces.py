@@ -350,7 +350,7 @@ class King(Piece):
                         not kingside_rook.has_moved and
                         not self.is_attacked(board, row, self.col + 1) and
                         not self.is_attacked(board, row, self.col + 2)):
-                    legal_moves.append(Move((self.row, self.col), (row,self.col + 2)))
+                    legal_moves.append(Move((self.row, self.col), (row,self.col + 2), None, None, kingside_rook))
 
             # Queenside castling
             if (self.col - 2 >= 0 and
@@ -362,7 +362,7 @@ class King(Piece):
                         not queenside_rook.has_moved and
                         not self.is_attacked(board, row, self.col - 1) and
                         not self.is_attacked(board, row, self.col - 2)):
-                    legal_moves.append(Move((self.row, self.col), (row,self.col - 2)))
+                    legal_moves.append(Move((self.row, self.col), (row,self.col - 2), None,None, None, queenside_rook))
 
         return {
             'legal_moves': legal_moves,

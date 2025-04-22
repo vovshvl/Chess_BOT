@@ -37,8 +37,8 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    Rook(-5, 0, 0)
-
+    King(6, 7, 4),
+    Rook(5, 7, 0)
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
@@ -61,7 +61,26 @@ def make_move(board, move):
 
     moving_piece = board[from_row][from_col]
 
-    board[to_row][to_col] = moving_piece
+    #Promotion
+    if (moving_piece.value == 1 or moving_piece.value == -1) and (to_row == 0 or to_row == 7):
+        board[to_row][to_col] = move.promotion
+    else:
+        board[to_row][to_col] = moving_piece
+
+    #Castling
+    if move.castling_king is not None:
+        board[to_row][to_col] = moving_piece
+        board[from_row][from_col] = None
+        board[to_row][to_col-1] = move.castling_king
+        board[to_row][to_col+1] = None
+
+    if move.castling_queen is not None:
+        board[to_row][to_col] = moving_piece
+        board[from_row][from_col] = None
+        board[to_row][to_col+1] = move.castling_queen
+        board[to_row][to_col-2] = None
+
+    #Rest
     moving_piece.row = to_row
     moving_piece.col = to_col
     board[from_row][from_col] = None
@@ -72,10 +91,26 @@ def undo_move(board, move):
 
     moving_piece = board[to_row][to_col]
 
-    board[from_row][from_col] = moving_piece
+    if move.promotion is not None:
+        if moving_piece.value>0:
+            val = 1
+        else:
+            val = -1
+        board[from_row][from_col] = Pawn(val, from_row, from_col)
+    else:
+        board[from_row][from_col] = moving_piece
+
+    if move.castling_king is not None:
+        board[move.castling_king.row][move.castling_king.col] = Rook(move.castling_king.value, move.castling_king.row, move.castling_king.col)
+        board[from_row][from_col+1] = None
+    if move.castling_queen is not None:
+        board[move.castling_queen.row][move.castling_queen.col] = Rook(move.castling_queen.value, move.castling_queen.row, move.castling_queen.col)
+        board[from_row][from_col-1] = None
+
+    #Rest
     moving_piece.row = from_row
     moving_piece.col = from_col
-    board[to_row][to_col] = None
+    board[to_row][to_col] = move.piece_captured
 
 
 
