@@ -216,34 +216,42 @@ def all_moves(board, color):
 
 def minmax(board, all_moves, depth, alpha, beta, turn):
     #Alpha–beta pruning
-    if turn>0:
-        max_eval = -float('inf')
-        for move in all_moves:
+    best_move = None
+    eval = 0
+    if depth !=0:
 
-            make_move(board, move)
-            eval,_ = minmax(board, all_moves, depth-1, alpha, beta, turn*-1)
-            undo_move(board, move)
-            if eval > max_eval:
-                max_eval = eval
-                best_move = move
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break
-        return max_eval, best_move
+        if turn>0:
+            max_eval = -float('inf')
+            for move in moves:
+
+                make_move(board, move)
+                possible_moves= all_moves(board,turn*-1)
+                eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
+                undo_move(board, move)
+
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = move
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            return max_eval, best_move
+        else:
+            min_eval = float('inf')
+            for move in moves:
+                make_move(board, move)
+                possible_moves = all_moves(board,turn*-1)
+                eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
+                undo_move(board, move)
+                if eval > min_eval:
+                    min_eval = eval
+                    best_move = move
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+                return min_eval, best_move
     else:
-        min_eval = float('inf')
-        for move in all_moves:
-            make_move(board, move)
-            eval, _ = minmax(board, all_moves, depth-1, alpha, beta, turn*-1)
-            undo_move(board, move)
-            if eval > min_eval:
-                min_eval = eval
-                best_move = move
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
-            return min_eval, best_move
-
+        return eval, best_move
 
 
 

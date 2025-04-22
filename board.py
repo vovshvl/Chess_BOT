@@ -60,7 +60,8 @@ def make_move(board, move):
     move.piece_captured = board[to_row][to_col]
 
     moving_piece = board[from_row][from_col]
-
+    if moving_piece is None:
+        return False
     #Promotion
     if (moving_piece.value == 1 or moving_piece.value == -1) and (to_row == 0 or to_row == 7):
         board[to_row][to_col] = move.promotion
