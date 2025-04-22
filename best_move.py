@@ -37,60 +37,48 @@ print("Desirability Heatmap:")
 
 
 
-
+desirability_maps = {
+    1: DesirabilityMap(desirability_pawn),
+    2: DesirabilityMap(desirability_knight),
+    3: DesirabilityMap(desirability_bishop),
+    4: DesirabilityMap(desirability_rook),
+    5: DesirabilityMap(desirability_queen),
+    6: DesirabilityMap(desirability_king),
+    -1: DesirabilityMap(desirability_pawn),
+    -2: DesirabilityMap(desirability_knight),
+    -3: DesirabilityMap(desirability_bishop),
+    -4: DesirabilityMap(desirability_rook),
+    -5: DesirabilityMap(desirability_queen),
+    -6: DesirabilityMap(desirability_king),
+}
 
 def evaluate_piece_at(row, col, board,map):
     base_score = 1
     desirability_bonus = map.get(row, col)
-    Piece= board[row][col]
-    if Piece.is_attacked ==True and Piece.is_defended == False:
-        return base_score -99
+    Piece = board[row][col]
+    if Piece.is_attacked == True and Piece.is_defended == False:
+        return base_score - 99
     possible_attacks_from_new_pos = Piece.legal_moves(board)['attacks']
 
     return base_score * desirability_bonus
 
-"""
+
 def evaluate_board(board):
-    board_score_white=0
+    board_score_white = 0
     board_score_black = 0
     for row in range(8):
         for col in range(8):
-            if board[row][col] == 0 or board[row][col] is None:
+            piece = board[row][col]
+            if not piece:
                 continue
-            if board[row][col] !=0 or board[row][col] is not None:
-                Piece = board[row][col]
-                if Piece.value>0:
-                    match Piece.value:
-                        case 1:
-                            map = DesirabilityMap(desirability_pawn)
-                        case 2:
-                            map = DesirabilityMap(desirability_knight)
-                        case 3:
-                            map = DesirabilityMap(desirability_bishop)
-                        case 4:
-                            map = DesirabilityMap(desirability_rook)
-                        case 5:
-                            map = DesirabilityMap(desirability_queen)
-                        case 6:
-                            map = DesirabilityMap(desirability_king)
+            if piece.value>0:
+                    map = desirability_maps[piece.value]
                     board_score_white += evaluate_piece_at(row, col, board, map)
-                else:
-                    match Piece.value:
-                        case -1:
-                            map = DesirabilityMap(desirability_pawn)
-                        case -2:
-                            map = DesirabilityMap(desirability_knight)
-                        case -3:
-                            map = DesirabilityMap(desirability_bishop)
-                        case -4:
-                            map = DesirabilityMap(desirability_rook)
-                        case -5:
-                            map = DesirabilityMap(desirability_queen)
-                        case -6:
-                            map = DesirabilityMap(desirability_king)
+            else:
+                    map = desirability_maps[piece.value]
                     board_score_black+=evaluate_piece_at(row, col, board, map)
     return board_score_white, board_score_black
-"""
+
 def all_moves(board, color):
     all_moves = []
     for row in range(8):
@@ -131,5 +119,7 @@ def minmax(board, all_moves, depth, alpha, beta, max_player):
 
 #print(evaluate_board(board))
 
-#duration = timeit.timeit(lambda: evaluate_board(board), number=64000)
-#print(f"Time for 1,000,000 asks: {duration:.4f} seconds")
+duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
+print(f"Time for 100000 asks: {duration:.4f} seconds")
+for i in range(1, 100):
+    print(timeit.timeit(lambda: evaluate_board(board), number=100000))
