@@ -16,12 +16,14 @@ def test_moves():
     print_board(board)
 
 def test_allmoves():
-    board = initialise_board()
+    board = initialise_test_board()
     moves1 = all_moves(board, 1)
-    moves2 = all_moves(board, -1)
+    for move in moves1:
+        print(move.to_square)
+    #moves2 = all_moves(board, -1)
 
 def test_minmax():
-    board = initialise_board()
+    board = initialise_test_board()
     print_board(board)
     print (evaluate_board(board))
     moves = all_moves(board, 1)
@@ -77,6 +79,6 @@ def test_sort_moves():
         print(move.to_square)
 #test_game()
 #test_allmoves()
-#test_minmax()
+test_minmax()
 #test_checks()
-test_sort_moves()
+#test_sort_moves()

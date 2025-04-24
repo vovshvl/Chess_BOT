@@ -1,4 +1,3 @@
-from best_move import move_leads_to_check
 class Move:
     def __init__(self, from_square, to_square, piece_captured=None, promotion=None, castling_king=None, castling_queen = None, en_passant_captured_square=None, check=None):
         self.from_square = from_square    # (row, col)
@@ -17,7 +16,7 @@ class Move:
         return self.to_square
 
     def give_move_score(self):
-        if self.check is not None:
+        if self.check is not None and self.check == True:
             self.move_score += 1000
         if self.piece_captured is not None:
             self.move_score += 100

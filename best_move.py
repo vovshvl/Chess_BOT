@@ -1,6 +1,7 @@
 
 import timeit
-
+from Move import *
+from board import make_move
 from engine import *
 
 desirability_pawn_black = [
@@ -161,6 +162,7 @@ desirability_maps = {
 }
 
 def move_leads_to_check(board, move, king_square):
+    print_board(board)
     make_move(board, move)
     if board[king_square[0]][king_square[1]].is_check(board) == True:
         move.check = True
@@ -171,13 +173,20 @@ def move_leads_to_check(board, move, king_square):
         undo_move(board, move)
         return False
 
-def sort_moves(board, all_moves):
+def sort_moves(board, all_moves, king_square):
     for move in all_moves:
-        move_leads_to_check(board, move, (0,4))
+        move_leads_to_check(board, move, king_square)
         move.give_move_score()
     all_moves.sort(key=lambda move: move.move_score, reverse=True)
     return all_moves
 
+def find_king(board, color):
+    for r in range(8):
+        for c in range(8):
+            piece = board[r][c]
+            if isinstance(piece, King) and piece.value == color:
+                return (r, c)
+    return None
 
 
 
@@ -227,7 +236,11 @@ def all_moves(board, color):
                 all_moves.extend(result['legal_moves'])
             else:
                 print(f"Warning: piece at ({row}, {col}) returned malformed legal_moves")
-    return all_moves
+    enemy_king_pos = find_king(board, color*-1)
+    if enemy_king_pos :
+        return sort_moves(board, all_moves, enemy_king_pos)
+    else:
+        return all_moves
 #print(all_moves(board))
 
 def minmax(board, moves, depth, alpha, beta, turn):

@@ -38,7 +38,7 @@ pieces = [
 ]
 testpieces = [
     King(-6, 0, 4),
-    Knight(-2, 7, 7),
+    Knight(-2, 7, 5),
     Rook(4, 7, 0)
 ]
 board = [[None for _ in range(8)] for _ in range(8)]

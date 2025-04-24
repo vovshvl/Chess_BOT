@@ -1,4 +1,5 @@
 from Move import Move
+
 class Piece:
 
     def __init__(self, value, row, col, has_moved=False):
