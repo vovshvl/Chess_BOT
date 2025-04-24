@@ -37,8 +37,9 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(6, 7, 4),
-    Rook(5, 7, 0)
+    King(-6, 0, 4),
+    Knight(-2, 7, 7),
+    Rook(4, 7, 0)
 ]
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
@@ -91,6 +92,8 @@ def undo_move(board, move):
     to_row, to_col = move.to_square
 
     moving_piece = board[to_row][to_col]
+    if moving_piece is None:
+        return False
 
     if move.promotion is not None:
         if moving_piece.value>0:

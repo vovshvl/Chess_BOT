@@ -142,12 +142,8 @@ class DesirabilityMap:
 
 # Create the map
 
-board = initialise_board()
+#board = initialise_board()
 # Show the full map as a grid
-
-
-
-
 
 desirability_maps = {
     1: DesirabilityMap(desirability_pawn_white),
@@ -163,6 +159,27 @@ desirability_maps = {
     -5: DesirabilityMap(desirability_queen_white),
     -6: DesirabilityMap(desirability_king_black),
 }
+
+def move_leads_to_check(board, move, king_square):
+    make_move(board, move)
+    if board[king_square[0]][king_square[1]].is_check(board) == True:
+        move.check = True
+        undo_move(board, move)
+        return True
+    else:
+        move.check = False
+        undo_move(board, move)
+        return False
+
+def sort_moves(board, all_moves):
+    for move in all_moves:
+        move_leads_to_check(board, move, (0,4))
+        move.give_move_score()
+    all_moves.sort(key=lambda move: move.move_score, reverse=True)
+    return all_moves
+
+
+
 
 def evaluate_piece_at(row, col, board,map):
     base_score = 1
@@ -228,11 +245,11 @@ def minmax(board, moves, depth, alpha, beta, turn):
         for move in moves:
 
             make_move(board, move)
-            print_board(board)
+            #print_board(board)
             possible_moves= all_moves(board,turn*-1)
             eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
             undo_move(board, move)
-            print(eval)
+            #print(eval)
             if eval > max_eval:
                 max_eval = eval
                 best_move = move
