@@ -201,7 +201,7 @@ def evaluate_piece_at(row, col, board,map):
     return base_score * desirability_bonus
 
 
-def evaluate_board_white(board):
+def evaluate_board(board):
     board_score_white = 0
     board_score_black = 0
     for row in range(8):
@@ -248,7 +248,7 @@ def minmax(board, moves, depth, alpha, beta, turn):
     best_move = None
 
     if depth == 0 or not moves:
-        return evaluate_board_white(board), best_move
+        return evaluate_board(board), best_move
 
     if turn > 0:
         max_eval = -float('inf')

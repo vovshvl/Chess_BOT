@@ -83,6 +83,6 @@ def test_sort_moves():
 def test_eval():
     board = initialise_test_board()
 
-    print(evaluate_board_white(board))
+    print(evaluate_board(board))
 
 #test_eval()
