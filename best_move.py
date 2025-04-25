@@ -151,13 +151,13 @@ desirability_maps = {
     2: DesirabilityMap(desirability_knight_white),
     3: DesirabilityMap(desirability_bishop_white),
     4: DesirabilityMap(desirability_rook_white),
-    5: DesirabilityMap(desirability_queen_black),
+    5: DesirabilityMap(desirability_queen_white),
     6: DesirabilityMap(desirability_king_white),
     -1: DesirabilityMap(desirability_pawn_black),
     -2: DesirabilityMap(desirability_knight_black),
     -3: DesirabilityMap(desirability_bishop_black),
-    -4: DesirabilityMap(desirability_rook_white),
-    -5: DesirabilityMap(desirability_queen_white),
+    -4: DesirabilityMap(desirability_rook_black),
+    -5: DesirabilityMap(desirability_queen_black),
     -6: DesirabilityMap(desirability_king_black),
 }
 
@@ -201,7 +201,7 @@ def evaluate_piece_at(row, col, board,map):
     return base_score * desirability_bonus
 
 
-def evaluate_board(board):
+def evaluate_board_white(board):
     board_score_white = 0
     board_score_black = 0
     for row in range(8):
@@ -246,45 +246,49 @@ def all_moves(board, color):
 def minmax(board, moves, depth, alpha, beta, turn):
     #Alpha–beta pruning
     best_move = None
-    eval = 0
-    if depth==0 or not moves:
-        return evaluate_board(board), best_move
 
-    if turn>0:
+    if depth == 0 or not moves:
+        return evaluate_board_white(board), best_move
+
+    if turn > 0:
         max_eval = -float('inf')
-        if not moves:
-            eval = evaluate_board(board)  # fallback for no moves
-            return eval, None
         for move in moves:
-
             make_move(board, move)
-            #print_board(board)
-            possible_moves= all_moves(board,turn*-1)
-            eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
+
+
+            possible_moves = all_moves(board, -turn)
+            current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
+
             undo_move(board, move)
-            #print(eval)
-            if eval > max_eval:
-                max_eval = eval
+
+            if current_eval > max_eval:
+                max_eval = current_eval
                 best_move = move
-            alpha = max(alpha, eval)
+            print(max_eval, current_eval,best_move.to_square)
+            alpha = max(alpha, current_eval)
             if beta <= alpha:
-                    break
-        return max_eval, best_move
-    else:
+                break
 
+        return max_eval, best_move
+
+    else:
         min_eval = float('inf')
-        if not moves:
-            eval = evaluate_board(board)  # fallback for no moves
-            return eval, None
         for move in moves:
             make_move(board, move)
-            possible_moves = all_moves(board,turn*-1)
-            eval, _ = minmax(board, possible_moves, depth-1, alpha, beta, turn*-1)
+
+
+            possible_moves = all_moves(board, -turn)
+            current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
+
             undo_move(board, move)
-            if eval < min_eval:
-                min_eval = eval
+
+
+
+            if current_eval < min_eval:
+                min_eval = current_eval
                 best_move = move
-            beta = min(beta, eval)
+            print(min_eval, current_eval)
+            beta = min(beta, current_eval)
             if beta <= alpha:
                 break
         return min_eval, best_move

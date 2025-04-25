@@ -95,6 +95,9 @@ def undo_move(board, move):
     if moving_piece is None:
         return False
 
+    if moving_piece is None:
+        return False
+
     if move.promotion is not None:
         if moving_piece.value>0:
             val = 1
