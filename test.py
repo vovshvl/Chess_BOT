@@ -79,6 +79,10 @@ def test_sort_moves():
         print(move.to_square)
 #test_game()
 #test_allmoves()
-test_minmax()
-#test_checks()
-#test_sort_moves()
+
+def test_eval():
+    board = initialise_test_board()
+
+    print(evaluate_board_white(board))
+
+#test_eval()
