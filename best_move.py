@@ -1,7 +1,3 @@
-
-import timeit
-from Move import *
-from board import make_move
 from engine import *
 
 desirability_pawn_black = [
@@ -164,7 +160,7 @@ desirability_maps = {
 def move_leads_to_check(board, move, king_square):
     print_board(board)
     make_move(board, move)
-    if board[king_square[0]][king_square[1]].is_check(board) == True:
+    if board[king_square[0]][king_square[1]].is_check(board):
         move.check = True
         undo_move(board, move)
         return True
@@ -185,10 +181,10 @@ def evaluate_piece_at(piece,row,col, board,map):
     base_score = 1
     desirability_bonus = map.get(row, col)
     if piece.value == 6:
-        if piece.is_check == True:
+        if piece.is_check:
             base_score = 0
     if piece.value == -6:
-        if piece.is_check == True:
+        if piece.is_check:
             base_score = 0
     if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
         return base_score-5
@@ -248,7 +244,7 @@ def minmax(board, moves, depth, alpha, beta, turn):
         max_eval = -float('inf')
         for move in moves:
             make_move(board, move)
-            if make_move(board, move)== False:
+            if not make_move(board, move):
                 break
 
             possible_moves = all_moves(board, -turn)
