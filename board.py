@@ -37,7 +37,9 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(-6, 0, 4)
+    Rook(4, 7, 0),
+    Bishop(3, 7, 2),
+    King(6, 7, 4)
 
 ]
 

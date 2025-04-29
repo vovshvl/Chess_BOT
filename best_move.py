@@ -241,9 +241,11 @@ def minmax(board, moves, depth, alpha, beta, turn):
     if turn > 0:
         max_eval = -float('inf')
         for move in moves:
+
             make_move(board, move)
-            if not make_move(board, move):
-                break
+            #if not made_move:
+               # break
+
 
             possible_moves = all_moves(board, -turn)
             current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
