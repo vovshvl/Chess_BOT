@@ -117,7 +117,7 @@ def test_eval():
 
 #test_eval()
 #test_moves()
-#inialisegame()
+inialisegame()
 def test_is_checkmate():
     board = initialise_test_board()
     print_board(board)

@@ -251,7 +251,7 @@ def minmax(board, moves, depth, alpha, beta, turn):
             current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
 
             undo_move(board, move)
-            print_board(board)
+
 
             if current_eval > max_eval:
                 max_eval = current_eval

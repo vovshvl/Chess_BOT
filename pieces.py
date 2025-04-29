@@ -162,60 +162,46 @@ class Piece:
         }
 
 class Pawn(Piece):
-    def legal_moves(self, board):
-        legal_moves = []
-        if self.value >0:
-            if self.row == 6:
-                directions = [(-1, 0), (-2,0)]
-            else:
-                directions = [(-1, 0)]
-            attack_direction= [(-1, 1), (-1, -1)]
-        else:
-            if self.row == 1:
-                directions = [(1, 0), (2,0)]
-            else:
 
-                directions = [(1, 0)]
-            attack_direction = [(1, 1),(1, -1)]
-        for dr, dc in directions:
-            r, c = self.row, self.  col
-            for i in range(1):
-                r += dr
-                c += dc
+        def legal_moves(self, board):
+            legal_moves = []
+            attacks = []
 
+            if self.value > 0:  # White pawn
+                directions = [(-1, 0)] if self.row != 6 else [(-1, 0), (-2, 0)]
+                attack_direction = [(-1, 1), (-1, -1)]
+            else:  # Black pawn
+                directions = [(1, 0)] if self.row != 1 else [(1, 0), (2, 0)]
+                attack_direction = [(1, 1), (1, -1)]
+
+            # Forward moves
+            for dr, dc in directions:
+                r, c = self.row + dr, self.col + dc
                 if not self.is_on_board(r, c):
                     break
                 target = board[r][c]
                 if target == 0 or target is None:
-                    legal_moves.append(Move((self.row, self.col), (r,c)))
+                    legal_moves.append(Move((self.row, self.col), (r, c)))
                 else:
-                    break
-        attacks =[]
-        for dr, dc in attack_direction:
-            r, c = self.row, self.col
-            while True:
-                r += dr
-                c += dc
+                    break  # Blocked by a piece
+
+            # Attack moves
+            for dr, dc in attack_direction:
+                r, c = self.row + dr, self.col + dc
                 if not self.is_on_board(r, c):
-                    break
+                    continue
                 target = board[r][c]
+                if target is None or target == 0:
+                    continue
+                if (self.value > 0 and target.value < 0) or (self.value < 0 and target.value > 0):
+                    legal_moves.append(Move((self.row, self.col), (r, c)))
+                    attacks.append(Move((self.row, self.col), (r, c)))
 
-                if target == 0 or target is None:
-                    break
-                if self.value > 0:
-                    if target.value < 0:
-                        legal_moves.append(Move((self.row, self.col), (r,c)))
-                        attacks.append(Move((self.row, self.col), (r,c)))
+            return {
+                'legal_moves': legal_moves,
+                'attacks': attacks
+            }
 
-                else:
-                    if target.value > 0:
-                        legal_moves.append(Move((self.row, self.col), (r,c)))
-                        attacks.append(Move((self.row, self.col), (r,c)))
-
-        return {
-            'legal_moves': legal_moves,
-            'attacks': attacks
-        }
 
 class Rook(Piece):
     def legal_moves(self, board):
