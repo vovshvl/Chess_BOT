@@ -208,7 +208,7 @@ def evaluate_board(board):
                     map = desirability_maps[piece.value]
                     board_score_black+=evaluate_piece_at(piece,row,col, board, map)
     return board_score_white - board_score_black
-
+#possible optimization with limiting variables to 16 pieces as there cant be more in the game
 def all_moves(board, color):
     all_moves = []
     for row in range(8):
@@ -217,18 +217,18 @@ def all_moves(board, color):
             if piece in (None, 0):
                 continue  # Skip empty squares
             if color>0:
-                if piece.value<0:
-                    continue
+                if piece.value<0: 
+                    break
             else:
                 if piece.value>0:
-                    continue
+                    break
             result = piece.legal_moves(board)
 
             if isinstance(result, dict) and isinstance(result.get('legal_moves'), list):
                 all_moves.extend(result['legal_moves'])
             else:
                 print(f"Warning: piece at ({row}, {col}) returned malformed legal_moves")
-        return all_moves
+    return all_moves
 #print(all_moves(board))
 
 def minmax(board, moves, depth, alpha, beta, turn):
@@ -236,8 +236,6 @@ def minmax(board, moves, depth, alpha, beta, turn):
     best_move = None
 
     if depth == 0 or not moves:
-        if turn == 1:
-          print('no idea')
         return evaluate_board(board), best_move
 
     if turn > 0:
@@ -251,6 +249,7 @@ def minmax(board, moves, depth, alpha, beta, turn):
             current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
 
             undo_move(board, move)
+            print_board(board)
 
             if current_eval > max_eval:
                 max_eval = current_eval

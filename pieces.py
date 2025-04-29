@@ -199,6 +199,7 @@ class Pawn(Piece):
                 if not self.is_on_board(r, c):
                     break
                 target = board[r][c]
+
                 if target == 0 or target is None:
                     break
                 if self.value > 0:
@@ -308,6 +309,7 @@ class King(Piece):
                     board[row][self.col + 1] in [0, None] and
                     board[row][self.col + 2] in [0, None]):
                 kingside_rook = board[row][7]
+
                 if (isinstance(kingside_rook, Rook) and
                         not kingside_rook.has_moved and
                         not self.is_attacked(board, row, self.col + 1) and

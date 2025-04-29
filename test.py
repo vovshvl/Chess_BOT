@@ -17,7 +17,6 @@ def test_moves():
     print_board(board)
     print(get_black_king_square())
 
-test_moves()
 
 def test_allmoves():
     board = initialise_test_board()
@@ -38,11 +37,12 @@ def test_minmax():
 
 
 def test_game():
-    board = initialise_test_board()
+    board = initialise_board()
     print_board(board)
     print (evaluate_board(board))
-    moves = all_moves(board, -1)
-    move1 = minmax(board, moves, 3, -float('inf'), float('inf'), -1)[1]
+    moves = all_moves(board, 1)
+    print(moves)
+    move1 = minmax(board, moves, 3, -float('inf'), float('inf'), 1)[1]
     print (move1)
     make_move(board, move1)
     print_board(board)
@@ -59,6 +59,7 @@ def test_game():
     #make_move(board, move3)
     #print_board(board)
     #print(evaluate_board(board))
+
 
 def test_checks():
     board = initialise_test_board()
@@ -82,7 +83,7 @@ def test_sort_moves():
     for move in moves:
         print(move.move_score)
         print(move.to_square)
-#test_game()
+test_game()
 #test_allmoves()
 
 def test_eval():
@@ -92,7 +93,7 @@ def test_eval():
 
 #test_eval()
 #test_moves()
-
+#inialisegame()
 def test_is_checkmate():
     board = initialise_test_board()
     print_board(board)
