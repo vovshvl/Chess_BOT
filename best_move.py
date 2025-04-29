@@ -180,23 +180,19 @@ def sort_moves(board, all_moves, king_square):
     all_moves.sort(key=lambda move: move.move_score, reverse=True)
     return all_moves
 
-def find_king(board, color):
-    for r in range(8):
-        for c in range(8):
-            piece = board[r][c]
-            if isinstance(piece, King) and piece.value == color:
-                return (r, c)
-    return None
 
-
-
-def evaluate_piece_at(row, col, board,map):
+def evaluate_piece_at(piece,row,col, board,map):
     base_score = 1
     desirability_bonus = map.get(row, col)
-    Piece = board[row][col]
-    if Piece.is_attacked(board,Piece.row,Piece.col) == True and Piece.is_defended(board) == False:
-        return base_score
-    possible_attacks_from_new_pos = Piece.legal_moves(board)['attacks']
+    if piece.value == 6:
+        if piece.is_check == True:
+            base_score = 0
+    if piece.value == -6:
+        if piece.is_check == True:
+            base_score = 0
+    if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
+        return base_score-5
+    possible_attacks_from_new_pos = piece.legal_moves(board)['attacks']
 
     return base_score * desirability_bonus
 
@@ -211,10 +207,10 @@ def evaluate_board(board):
                 continue
             if piece.value>0:
                     map = desirability_maps[piece.value]
-                    board_score_white += evaluate_piece_at(row, col, board, map)
+                    board_score_white += evaluate_piece_at(piece,row,col, board, map)
             else:
                     map = desirability_maps[piece.value]
-                    board_score_black+=evaluate_piece_at(row, col, board, map)
+                    board_score_black+=evaluate_piece_at(piece,row,col, board, map)
     return board_score_white - board_score_black
 
 def all_moves(board, color):
@@ -226,20 +222,16 @@ def all_moves(board, color):
                 continue  # Skip empty squares
             if color>0:
                 if piece.value<0:
-                    break
+                    continue
             else:
                 if piece.value>0:
-                    break
+                    continue
             result = piece.legal_moves(board)
 
             if isinstance(result, dict) and isinstance(result.get('legal_moves'), list):
                 all_moves.extend(result['legal_moves'])
             else:
                 print(f"Warning: piece at ({row}, {col}) returned malformed legal_moves")
-    enemy_king_pos = find_king(board, color*-1)
-    if enemy_king_pos :
-        return sort_moves(board, all_moves, enemy_king_pos)
-    else:
         return all_moves
 #print(all_moves(board))
 
@@ -248,13 +240,16 @@ def minmax(board, moves, depth, alpha, beta, turn):
     best_move = None
 
     if depth == 0 or not moves:
+        if turn == 1:
+          print('no idea')
         return evaluate_board(board), best_move
 
     if turn > 0:
         max_eval = -float('inf')
         for move in moves:
             make_move(board, move)
-
+            if make_move(board, move)== False:
+                break
 
             possible_moves = all_moves(board, -turn)
             current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
@@ -264,7 +259,6 @@ def minmax(board, moves, depth, alpha, beta, turn):
             if current_eval > max_eval:
                 max_eval = current_eval
                 best_move = move
-            print(max_eval, current_eval,best_move.to_square)
             alpha = max(alpha, current_eval)
             if beta <= alpha:
                 break
@@ -287,7 +281,6 @@ def minmax(board, moves, depth, alpha, beta, turn):
             if current_eval < min_eval:
                 min_eval = current_eval
                 best_move = move
-            print(min_eval, current_eval)
             beta = min(beta, current_eval)
             if beta <= alpha:
                 break

@@ -37,10 +37,11 @@ pieces = [
     Queen(5, 7, 3),
 ]
 testpieces = [
-    King(-6, 0, 4),
-    Knight(-2, 7, 5),
-    Rook(4, 7, 0)
+    King(-6, 0, 4)
+
 ]
+
+
 board = [[None for _ in range(8)] for _ in range(8)]
 def initialise_board():
 
@@ -55,14 +56,25 @@ def initialise_test_board():
         board[piece.row][piece.col] = piece
     return board
 
+white_king_square = (7, 4)
+black_king_square = (0, 4)
+
 def make_move(board, move):
     from_row, from_col = move.from_square
     to_row, to_col = move.to_square
     move.piece_captured = board[to_row][to_col]
 
     moving_piece = board[from_row][from_col]
+
     if moving_piece is None:
         return False
+    #King
+    if moving_piece.value == 6:
+        global white_king_square
+        white_king_square = (to_row, to_col)
+    if moving_piece.value == -6:
+        global black_king_square
+        black_king_square = (to_row, to_col)
     #Promotion
     if (moving_piece.value == 1 or moving_piece.value == -1) and (to_row == 0 or to_row == 7):
         board[to_row][to_col] = move.promotion
@@ -120,6 +132,12 @@ def undo_move(board, move):
     board[to_row][to_col] = move.piece_captured
 
 
+
+def get_white_king_square():
+    return white_king_square
+
+def get_black_king_square():
+    return black_king_square
 
 def print_board(board):
     print("  0 1 2 3 4 5 6 7")

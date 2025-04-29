@@ -7,13 +7,17 @@ def test_moves():
     board = initialise_test_board()
     print_board(board)
 
-    move = all_moves(board, 1)[15]
-    # move = Move((1, 1), (0, 1), None, Queen(6, 0, 1))
-    make_move(board, move)
+    move1 = Move((0, 4), (0, 5))
+    make_move(board, move1)
     print_board(board)
+    print(get_black_king_square())
 
-    undo_move(board, move)
+    move2 = Move((0, 5), (0, 6))
+    make_move(board, move2)
     print_board(board)
+    print(get_black_king_square())
+
+test_moves()
 
 def test_allmoves():
     board = initialise_test_board()
@@ -34,26 +38,27 @@ def test_minmax():
 
 
 def test_game():
-    board = initialise_board()
+    board = initialise_test_board()
     print_board(board)
     print (evaluate_board(board))
-    moves = all_moves(board, 1)
-    move1 = minmax(board, moves, 3, -float('inf'), float('inf'), 1)[1]
+    moves = all_moves(board, -1)
+    move1 = minmax(board, moves, 3, -float('inf'), float('inf'), -1)[1]
+    print (move1)
     make_move(board, move1)
     print_board(board)
     print(evaluate_board(board))
 
-    moves = all_moves(board, -1)
-    move2 = minmax(board, moves, 3, -float('inf'), float('inf'), -1)[1]
+    moves = all_moves(board, 1)
+    move2 = minmax(board, moves, 3, -float('inf'), float('inf'), 1)[1]
     make_move(board, move2)
     print_board(board)
     print(evaluate_board(board))
 
-    moves = all_moves(board, 1)
-    move3 = minmax(board, moves, 3, -float('inf'), float('inf'), 1)[1]
-    make_move(board, move3)
-    print_board(board)
-    print(evaluate_board(board))
+    #moves = all_moves(board, 1)
+    #move3 = minmax(board, moves, 3, -float('inf'), float('inf'), 1)[1]
+    #make_move(board, move3)
+    #print_board(board)
+    #print(evaluate_board(board))
 
 def test_checks():
     board = initialise_test_board()
@@ -86,3 +91,15 @@ def test_eval():
     print(evaluate_board(board))
 
 #test_eval()
+#test_moves()
+
+def test_is_checkmate():
+    board = initialise_test_board()
+    print_board(board)
+
+    if board[0][4].is_checkmate(board) == True:
+        print("checkmate")
+    else:
+        print("not checkmate")
+
+#test_is_checkmate()

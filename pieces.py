@@ -1,5 +1,7 @@
 from Move import Move
 
+
+
 class Piece:
 
     def __init__(self, value, row, col, has_moved=False):
@@ -30,11 +32,15 @@ class Piece:
             r, c = row + dr, col + dc
             while self.is_on_board(r, c):
                 target = board[r][c]
+
                 if target is None:
                     r += dr
                     c += dc
                     continue
-
+                if target.row == self.row and target.col == self.col:
+                    r += dr
+                    c += dc
+                    continue
                 if target.value * sign > 0:  # Same color
                     break
 
@@ -155,71 +161,25 @@ class Piece:
             'attacks': attacks
         }
 
-    def move(self, board, new_row, new_col, promotion=None, turn=1):
-        if not self.is_on_board(new_row, new_col):
-            print("Move out of bounds.")
-            return False
-
-        target = board[new_row][new_col]
-
-        # Optional: add legality checks, like not capturing own pieces
-        if target is not None and (target.value * self.value > 0):
-            print("Cannot capture your own piece.")
-            return False
-
-        # Update board: clear old position
-        board[self.row][self.col] = None
-
-        # Capture opponent (if any)
-        if target is not None:
-            print(f"Captured: {target}")
-
-        # Move piece
-        self.row = new_row
-        self.col = new_col
-        self.has_moved = True
-        board[new_row][new_col] = self
-        turn = turn * -1
-        # === Pawn Promotion ===
-        """
-        if abs(self.value) == 1:  # If it's a pawn
-            if (self.value > 0 and new_row == 0) or (self.value < 0 and new_row == 7):
-                sign = 1 if self.value > 0 else -1
-                if promotion == "q":
-                    board[new_row][new_col] = Queen(sign * 5, new_row, new_col)
-                elif promotion == "r":
-                    board[new_row][new_col] = Rook(sign * 4, new_row, new_col)
-                elif promotion == "b":
-                    board[new_row][new_col] = Bishop(sign * 3, new_row, new_col)
-                elif promotion == "n":
-                    board[new_row][new_col] = Knight(sign * 2, new_row, new_col)
-                else:
-                    board[new_row][new_col] = Queen(sign * 5, new_row, new_col)  # default to queen
-                print("Pawn promoted!")
-        """
-
-
-        #move_history.append(((new_row, ),()))
-        return True
-
 class Pawn(Piece):
     def legal_moves(self, board):
         legal_moves = []
         if self.value >0:
-            if self.row == 1:
+            if self.row == 6:
                 directions = [(-1, 0), (-2,0)]
             else:
                 directions = [(-1, 0)]
             attack_direction= [(-1, 1), (-1, -1)]
         else:
-            if self.row == 6:
+            if self.row == 1:
                 directions = [(1, 0), (2,0)]
             else:
+
                 directions = [(1, 0)]
             attack_direction = [(1, 1),(1, -1)]
         for dr, dc in directions:
             r, c = self.row, self.  col
-            for i in range(2):
+            for i in range(1):
                 r += dr
                 c += dc
 
@@ -328,7 +288,8 @@ class King(Piece):
 
                 if not self.is_on_board(nr, nc):
                     continue
-
+                if self.is_attacked(board,nr, nc):
+                    continue
                 target = board[nr][nc]
 
                 if target is None or target == 0:
@@ -373,4 +334,12 @@ class King(Piece):
     def is_check(self, board):
         if self.is_attacked(board, self.row, self.col) == True:
             return True
+        return False
+
+    def is_checkmate(self, board):
+        for move in self.legal_moves(board)['legal_moves']:
+            print(move.to_square)
+        if self.is_check(board) == True and  not self.legal_moves(board)['legal_moves']:
+            return True
+        return False
 
