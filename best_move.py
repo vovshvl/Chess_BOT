@@ -182,10 +182,10 @@ def evaluate_piece_at(piece,row,col, board,map):
     desirability_bonus = map.get(row, col)
     if piece.value == 6:
         if piece.is_check:
-            base_score = 0
+            base_score = -10
     if piece.value == -6:
         if piece.is_check:
-            base_score = 0
+            base_score = -10
     if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
         return base_score-5
     possible_attacks_from_new_pos = piece.legal_moves(board)['attacks']
@@ -246,8 +246,9 @@ def minmax(board, moves, depth, alpha, beta, turn):
             #if not made_move:
                # break
 
-
-            possible_moves = all_moves(board, -turn)
+            if depth != 1:
+                possible_moves = all_moves(board, -turn)
+            else: possible_moves = []
             current_eval, _ = minmax(board, possible_moves, depth - 1, alpha, beta, -turn)
 
             undo_move(board, move)

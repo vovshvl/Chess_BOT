@@ -138,7 +138,7 @@ def get_white_king_square():
 def get_black_king_square():
     return black_king_square
 
-def print_board(board):
+def print_board2(board):
     print("  0 1 2 3 4 5 6 7")
     print("-----------------")
     for r in range(8):
@@ -148,3 +148,34 @@ def print_board(board):
             print(f"{value.value if value else '0':2} ", end="")  # Or use value.symbol()
         print()
     print("-----------------")
+
+    # Define the Unicode symbols
+piece_symbols = {
+        -1: '♙',  # Pawn
+        -2: '♘',  # Knight
+        -3:  '♗',  # Bishop
+        -4:  '♖',  # Rook
+        -5:  '♕',  # Queen
+        -6: '♔',
+        1: '♟',  # Pawn
+        2: '♞',  # Knight
+        3: '♝',  # Bishop
+        4:  '♜',  # Rook
+        5: '♛',  # Queen
+        6: '♚',
+    }
+
+def print_board(board):
+        print("  0 1 2 3 4 5 6 7")
+        print(" -----------------")
+        for r in range(8):
+            print(f"{r}|", end=" ")
+            for c in range(8):
+                piece = board[r][c]
+                if piece:
+                    symbol = piece_symbols[piece.value]
+                    print(symbol, end=" ")
+                else:
+                    print(" . ", end="")  # Empty square
+            print()
+        print(" -----------------")

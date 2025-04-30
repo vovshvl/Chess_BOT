@@ -60,9 +60,9 @@ def test_game():
 def inialisegame():
     board = initialise_board()
     starting_color = 1
-    play_moves(board, starting_color, 5)
+    play_moves(board, starting_color, 50)
 
-def play_moves(board, starting_color, moves_to_play, depth=3):
+def play_moves(board, starting_color, moves_to_play, depth=5):
     color = starting_color
     for _ in range(moves_to_play):
         print_board(board)

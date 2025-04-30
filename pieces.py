@@ -1,5 +1,10 @@
 from Move import Move
-
+PAWN = 1
+KNIGHT = 2
+BISHOP = 3
+ROOK = 4
+QUEEN = 5
+KING = 6
 
 
 class Piece:
@@ -282,7 +287,7 @@ class King(Piece):
                 if target is None or target == 0:
                     legal_moves.append(Move((self.row, self.col), (nr,nc)))
                 elif (target.value * self.value) < 0:  # Enemy piece
-                    legal_moves.append((nr, nc))
+                    legal_moves.append(Move((self.row,self.col),(nr, nc)))
                     attacks.append(Move((self.row, self.col), (nr,nc)))
 
         # Castling
