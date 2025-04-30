@@ -180,12 +180,20 @@ def sort_moves(board, all_moves, king_square):
 def evaluate_piece_at(piece,row,col, board,map):
     base_score = 1
     desirability_bonus = map.get(row, col)
-    if piece.value == 6:
-        if piece.is_check:
-            base_score = -10
     if piece.value == -6:
-        if piece.is_check:
-            base_score = -10
+        if piece.is_attacked(board, piece.row, piece.col):
+            base_score = -100
+            if piece.is_checkmate(board):
+                base_score = -1000
+        return base_score * desirability_bonus
+
+
+    if piece.value == -6:
+        if piece.is_attacked(board,piece.row,piece.col):
+            base_score = -100
+            if piece.is_checkmate(board):
+                base_score = -1000
+        return base_score*desirability_bonus
     if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
         return base_score-5
     possible_attacks_from_new_pos = piece.legal_moves(board)['attacks']
@@ -229,7 +237,6 @@ def all_moves(board, color):
             else:
                 print(f"Warning: piece at ({row}, {col}) returned malformed legal_moves")
     return all_moves
-#print(all_moves(board))
 
 def minmax(board, moves, depth, alpha, beta, turn):
     #Alpha–beta pruning
@@ -286,10 +293,3 @@ def minmax(board, moves, depth, alpha, beta, turn):
 
 
 
-
-#print(evaluate_board(board))
-
-#duration = timeit.timeit(lambda: evaluate_board(board), number=100000)
-#print(f"Time for 100000 asks: {duration:.4f} seconds")
-#for i in range(1, 100):
-    #print(timeit.timeit(lambda: evaluate_board(board), number=100000))

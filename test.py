@@ -16,10 +16,6 @@ def test_moves():
     undo_move(board, moves[15])
     print_board(board)
 
-#test_moves()
-
-
-
 def test_allmoves():
     board = initialise_test_board()
     moves1 = all_moves(board, 1)
@@ -36,7 +32,6 @@ def test_minmax():
     make_move(board, move1)
     print_board(board)
     print(evaluate_board(board))
-
 
 def test_game():
     board = initialise_board()
@@ -56,13 +51,12 @@ def test_game():
     print_board(board)
     print(evaluate_board(board))
 
-
 def inialisegame():
     board = initialise_board()
     starting_color = 1
     play_moves(board, starting_color, 50)
 
-def play_moves(board, starting_color, moves_to_play, depth=5):
+def play_moves(board, starting_color, moves_to_play, depth=3):
     color = starting_color
     for _ in range(moves_to_play):
         print_board(board)
@@ -74,7 +68,7 @@ def play_moves(board, starting_color, moves_to_play, depth=5):
             break
 
         best_move = minmax(board, moves, depth, -float('inf'), float('inf'), color)[1]
-        print("Best move:", best_move)
+        print("Best move:", best_move.from_square, best_move.to_square)
         make_move(board, best_move)
 
         # Switch color for next move

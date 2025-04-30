@@ -330,8 +330,8 @@ class King(Piece):
         return False
 
     def is_checkmate(self, board):
-        for move in self.legal_moves(board)['legal_moves']:
-            print(move.to_square)
+
+
         if self.is_check(board) == True and  not self.legal_moves(board)['legal_moves']:
             return True
         return False
