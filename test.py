@@ -56,9 +56,9 @@ def test_game():
 def inialisegame():
     board = initialise_board()
     starting_color = 1
-    play_moves(board, starting_color, 4)
+    play_moves(board, starting_color, 50)
 
-def play_moves(board, starting_color, moves_to_play, depth=5 ):
+def play_moves(board, starting_color, moves_to_play, depth=3 ):
     color = starting_color
     start_time = timeit.default_timer()
     for _ in range(moves_to_play):
@@ -108,7 +108,8 @@ def test_sort_moves():
 #test_allmoves()
 #test_eval()
 #test_moves()
-inialisegame()
+for _ in range(10):
+    inialisegame()
 def test_is_checkmate():
     board = initialise_test_board()
     print_board(board)

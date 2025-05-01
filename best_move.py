@@ -32,7 +32,7 @@ desirability_queen_black = bytes ( [
 ])
 desirability_king_black = bytes ([
     118, 118, 118, 117, 117, 118, 118, 118,
-    116, 117, 118, 119, 119, 118, 117, 116,
+    116, 117, 118, 110, 110, 118, 117, 116,
     115, 116, 117, 118, 118, 117, 116, 115,
     114, 115, 116, 117, 117, 116, 115, 114,
     113, 114, 115, 116, 116, 115, 114, 113,
@@ -94,7 +94,7 @@ desirability_king_white =bytes ( [
     113, 114, 115, 116, 116, 115, 114, 113,
     114, 115, 116, 117, 117, 116, 115, 114,
     115, 116, 117, 118, 118, 117, 116, 115,
-    116, 117, 118, 119, 119, 118, 117, 116,
+    116, 117, 118, 110, 110, 118, 117, 116,
     118, 118, 118, 117, 117, 118, 118, 118])
 desirability_bishop_white = bytes ([
     20, 22, 25, 30, 30, 25, 22, 20,
@@ -194,7 +194,7 @@ def evaluate_piece_at(piece,row,col, board,map):
                 base_score = -1000
         return base_score*desirability_bonus
     if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
-        return base_score-5
+        return -base_score+5
     possible_attacks_from_new_pos = piece.legal_moves(board)['attacks']
 
     return base_score * desirability_bonus
