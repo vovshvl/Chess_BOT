@@ -15,6 +15,7 @@ class Piece:
         self.col = col
         self.has_moved = has_moved
         self.is_white = value > 0
+        self.is_pinned = False
 
     def position(self):
         return self.row, self.col
@@ -141,9 +142,39 @@ class Piece:
             return False
         return (target.value > 0) == (self.value > 0)
 
+    def move_leads_to_check(self, board, move):
+        """Check if a move would leave the king in check."""
+        from board import make_move, undo_move
+
+        # Find the king
+        king = None
+        king_row, king_col = None, None
+        for row in range(8):
+            for col in range(8):
+                piece = board[row][col]
+                if piece is not None and piece.value * self.value > 0 and abs(piece.value) == 6:
+                    king = piece
+                    king_row, king_col = row, col
+                    break
+            if king is not None:
+                break
+
+        # Make the move
+        make_move(board, move)
+
+        # Check if the king is in check
+        in_check = False
+        if king is not None:
+            in_check = king.is_check(board)
+
+        # Undo the move
+        undo_move(board, move)
+
+        return in_check
+
     def directionscheck(self, directions, board):
         legal_moves = []
-        attacks =[]
+        attacks = []
         for dr, dc in directions:
             r, c = self.row, self.col
             while True:
@@ -154,13 +185,17 @@ class Piece:
 
                 target = board[r][c]
                 if target == 0 or target is None:
-                    legal_moves.append(Move((self.row, self.col), (r,c)))
+                    move = Move((self.row, self.col), (r,c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
                 elif (target.value > 0) != (self.value > 0):
-                    legal_moves.append(Move((self.row, self.col), (r,c)))
-                    attacks.append(Move((self.row, self.col), (r,c)))
-                    break  # вражеская фигура
+                    move = Move((self.row, self.col), (r,c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
+                        attacks.append(move)
+                    break  # enemy piece
                 else:
-                    break  # своя фигура
+                    break  # friendly piece
         return {
             'legal_moves': legal_moves,
             'attacks': attacks
@@ -186,7 +221,9 @@ class Pawn(Piece):
                     break
                 target = board[r][c]
                 if target == 0 or target is None:
-                    legal_moves.append(Move((self.row, self.col), (r, c)))
+                    move = Move((self.row, self.col), (r, c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
                 else:
                     break  # Blocked by a piece
 
@@ -199,8 +236,10 @@ class Pawn(Piece):
                 if target is None or target == 0:
                     continue
                 if (self.value > 0 and target.value < 0) or (self.value < 0 and target.value > 0):
-                    legal_moves.append(Move((self.row, self.col), (r, c)))
-                    attacks.append(Move((self.row, self.col), (r, c)))
+                    move = Move((self.row, self.col), (r, c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
+                        attacks.append(move)
 
             return {
                 'legal_moves': legal_moves,
@@ -243,10 +282,14 @@ class Knight(Piece):
             if self.is_on_board(r, c):
                 target = board[r][c]
                 if target == 0 or target is None:
-                    legal_moves.append(Move((self.row, self.col), (r, c)))
+                    move = Move((self.row, self.col), (r, c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
                 elif (target.value > 0) != (self.value > 0):
-                    legal_moves.append(Move((self.row, self.col), (r, c)))
-                    attacks.append(Move((self.row, self.col), (r, c)))
+                    move = Move((self.row, self.col), (r, c))
+                    if not self.move_leads_to_check(board, move):
+                        legal_moves.append(move)
+                        attacks.append(move)
         return {
             'legal_moves': legal_moves,
             'attacks': attacks
@@ -280,15 +323,17 @@ class King(Piece):
 
                 if not self.is_on_board(nr, nc):
                     continue
-                if self.is_attacked(board,nr, nc):
+                if self.is_attacked(board, nr, nc):
                     continue
                 target = board[nr][nc]
 
                 if target is None or target == 0:
-                    legal_moves.append(Move((self.row, self.col), (nr,nc)))
+                    move = Move((self.row, self.col), (nr, nc))
+                    legal_moves.append(move)
                 elif (target.value * self.value) < 0:  # Enemy piece
-                    legal_moves.append(Move((self.row,self.col),(nr, nc)))
-                    attacks.append(Move((self.row, self.col), (nr,nc)))
+                    move = Move((self.row, self.col), (nr, nc))
+                    legal_moves.append(move)
+                    attacks.append(move)
 
         # Castling
         if not self.has_moved:
@@ -303,9 +348,11 @@ class King(Piece):
 
                 if (isinstance(kingside_rook, Rook) and
                         not kingside_rook.has_moved and
-                        not self.is_attacked(board, row, self.col + 1) and
-                        not self.is_attacked(board, row, self.col + 2)):
-                    legal_moves.append(Move((self.row, self.col), (row,self.col + 2), None, None, kingside_rook))
+                        not self.is_attacked(board, row, self.col) and  # King is not in check
+                        not self.is_attacked(board, row, self.col + 1) and  # Square king passes through is not attacked
+                        not self.is_attacked(board, row, self.col + 2)):  # Destination square is not attacked
+                    move = Move((self.row, self.col), (row, self.col + 2), None, None, kingside_rook)
+                    legal_moves.append(move)
 
             # Queenside castling
             if (self.col - 2 >= 0 and
@@ -315,9 +362,11 @@ class King(Piece):
                 queenside_rook = board[row][0]
                 if (isinstance(queenside_rook, Rook) and
                         not queenside_rook.has_moved and
-                        not self.is_attacked(board, row, self.col - 1) and
-                        not self.is_attacked(board, row, self.col - 2)):
-                    legal_moves.append(Move((self.row, self.col), (row,self.col - 2), None,None, None, queenside_rook))
+                        not self.is_attacked(board, row, self.col) and  # King is not in check
+                        not self.is_attacked(board, row, self.col - 1) and  # Square king passes through is not attacked
+                        not self.is_attacked(board, row, self.col - 2)):  # Destination square is not attacked
+                    move = Move((self.row, self.col), (row, self.col - 2), None, None, None, queenside_rook)
+                    legal_moves.append(move)
 
         return {
             'legal_moves': legal_moves,
@@ -335,4 +384,3 @@ class King(Piece):
         if self.is_check(board) == True and  not self.legal_moves(board)['legal_moves']:
             return True
         return False
-

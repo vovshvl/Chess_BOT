@@ -1,3 +1,5 @@
+import timeit
+
 from board import *
 from engine import *
 from best_move import *
@@ -54,10 +56,11 @@ def test_game():
 def inialisegame():
     board = initialise_board()
     starting_color = 1
-    play_moves(board, starting_color, 50)
+    play_moves(board, starting_color, 4)
 
-def play_moves(board, starting_color, moves_to_play, depth=3):
+def play_moves(board, starting_color, moves_to_play, depth=5 ):
     color = starting_color
+    start_time = timeit.default_timer()
     for _ in range(moves_to_play):
         print_board(board)
         print("Evaluation:", evaluate_board(board))
@@ -73,10 +76,10 @@ def play_moves(board, starting_color, moves_to_play, depth=3):
 
         # Switch color for next move
         color = -color
-
+    end_time = timeit.default_timer()
+    total_time = end_time - start_time
+    print("Total time:", total_time)
     # Final board state after all moves
-    print_board(board)
-    print("Final Evaluation:", evaluate_board(board))
 
 
 def test_checks():
@@ -101,14 +104,8 @@ def test_sort_moves():
     for move in moves:
         print(move.move_score)
         print(move.to_square)
-test_game()
+#test_game()
 #test_allmoves()
-
-def test_eval():
-    board = initialise_test_board()
-
-    print(evaluate_board(board))
-
 #test_eval()
 #test_moves()
 inialisegame()
