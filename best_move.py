@@ -14,8 +14,8 @@ desirability_rook_black =bytes ( [
     50, 50, 52, 54, 54, 52, 50, 50,
     52, 54, 56, 58, 58, 56, 54, 52,
     52, 54, 56, 58, 58, 56, 54, 52,
-    53, 55, 57, 60, 60, 57, 55, 53,
-    53, 55, 57, 60, 60, 57, 55, 53,
+    53, 55, 57, 55, 55, 57, 55, 53,
+    53, 55, 57, 55, 55, 57, 55, 53,
     52, 54, 56, 58, 58, 56, 54, 52,
     52, 52, 52, 52, 52, 52, 52, 52,
     50, 50, 50, 50, 50, 50, 50, 50
@@ -31,7 +31,7 @@ desirability_queen_black = bytes ( [
     88, 88, 89, 90, 90, 89, 88, 88
 ])
 desirability_king_black = bytes ([
-    118, 118, 118, 117, 117, 118, 118, 118,
+    118, 127, 118, 117, 117, 124, 118, 118,
     116, 117, 118, 110, 110, 118, 117, 116,
     115, 116, 117, 118, 118, 117, 116, 115,
     114, 115, 116, 117, 117, 116, 115, 114,
@@ -54,8 +54,8 @@ desirability_knight_black = bytes ([
     15, 20, 25, 30, 30, 25, 20, 15,
     20, 30, 35, 40, 40, 35, 30, 20,
     25, 35, 45, 50, 50, 45, 35, 25,
-    30, 40, 50, 60, 60, 50, 40, 30,
-    30, 40, 50, 60, 60, 50, 40, 30,
+    30, 40, 50, 55, 55, 50, 40, 30,
+    30, 40, 50, 55, 55, 50, 40, 30,
     25, 35, 45, 50, 50, 45, 35, 25,
     20, 30, 35, 40, 40, 35, 30, 20,
     15, 20, 25, 30, 30, 25, 20, 15
@@ -95,7 +95,7 @@ desirability_king_white =bytes ( [
     114, 115, 116, 117, 117, 116, 115, 114,
     115, 116, 117, 118, 118, 117, 116, 115,
     116, 117, 118, 110, 110, 118, 117, 116,
-    118, 118, 118, 117, 117, 118, 118, 118])
+    118, 118, 125, 117, 117, 118, 127, 118])
 desirability_bishop_white = bytes ([
     20, 22, 25, 30, 30, 25, 22, 20,
     22, 26, 30, 35, 35, 30, 26, 22,
@@ -181,20 +181,22 @@ def evaluate_piece_at(piece,row,col, board,map):
     desirability_bonus = map.get(row, col)
     if piece.value == -6:
         if piece.is_attacked(board, piece.row, piece.col):
-            base_score = -100
+            base_score = -1
             if piece.is_checkmate(board):
                 base_score = -1000
         return base_score * desirability_bonus
 
 
     if piece.value == -6:
+        if piece.has_castled == True:
+            base_score += 50
         if piece.is_attacked(board,piece.row,piece.col):
-            base_score = -100
+            base_score = -1
             if piece.is_checkmate(board):
                 base_score = -1000
         return base_score*desirability_bonus
     if piece.is_attacked(board,row,col) == True and piece.is_defended(board) == False:
-        return -base_score+5
+        return -base_score* desirability_bonus+5
     possible_attacks_from_new_pos = piece.legal_moves(board)['attacks']
 
     return base_score * desirability_bonus
