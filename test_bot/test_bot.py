@@ -222,7 +222,7 @@ def run_bot(raw_config: CONFIG_DICT_TYPE, logging_level: int, opponent_path: Opt
 @pytest.mark.timeout(180, method="thread")
 def test_sf() -> None:
     """Test lichess-bot with Stockfish (UCI)."""
-    with open("./config.yml.default") as file:
+    with open("./config.yml") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = ""
     CONFIG["engine"]["dir"] = "./TEMP/"
@@ -247,7 +247,7 @@ def test_lc0() -> None:
     """Test lichess-bot with Leela Chess Zero (UCI)."""
     if platform != "win32":
         pytest.skip("Platform must be Windows.")
-    with open("./config.yml.default") as file:
+    with open("./config.yml") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = ""
     CONFIG["engine"]["dir"] = "./TEMP/"
@@ -275,7 +275,7 @@ def test_arasan() -> None:
     """Test lichess-bot with Arasan (XBoard)."""
     if platform not in ("linux", "win32"):
         pytest.skip("Platform must be Windows or Linux.")
-    with open("./config.yml.default") as file:
+    with open("./config.yml") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = ""
     CONFIG["engine"]["dir"] = "./TEMP/"
@@ -306,7 +306,7 @@ def test_homemade() -> None:
         logger.exception("Could not download the Stockfish chess engine")
         pytest.skip("Could not download the Stockfish chess engine")
 
-    with open("./config.yml.default") as file:
+    with open("./config.yml") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = ""
     CONFIG["engine"]["name"] = f"Stockfish{test_suffix}"
@@ -322,7 +322,7 @@ def test_homemade() -> None:
 @pytest.mark.timeout(60, method="thread")
 def test_buggy_engine() -> None:
     """Test lichess-bot with an engine that causes a timeout error within python-chess."""
-    with open("./config.yml.default") as file:
+    with open("./config.yml") as file:
         CONFIG = yaml.safe_load(file)
     CONFIG["token"] = ""
     CONFIG["engine"]["dir"] = "test_bot"
